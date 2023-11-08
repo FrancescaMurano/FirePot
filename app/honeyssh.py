@@ -82,7 +82,10 @@ while True:
             if command == b"\r":
                 if output.strip() == "ls":
                     print("test ls")
-
+                elif output.strip() == "q":
+                    channel.send("\n".encode('utf-8'))
+                    exit(0)
+                
                 result = f"Command received: {output}\r"
                 channel.send(result.encode('utf-8'))
                 channel.send("\n".encode('utf-8'))
