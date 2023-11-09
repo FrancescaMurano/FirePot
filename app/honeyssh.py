@@ -5,6 +5,8 @@ import os
 from subprocess import *
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
+PORT = 2222
+
 
 # Create a class to handle SSH connections
 class SSHServer(paramiko.ServerInterface):
@@ -29,11 +31,14 @@ class SSHServer(paramiko.ServerInterface):
     def check_channel_shell_request(self, channel):
     # Allow the shell request
         return True
+    
+    def welcome_message(self):
+        return "=========================\n-- Welcome to SSH Service --\n=========================\n".encode('utf-8')
    
 
 # Create a socket for the SSH server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('0.0.0.0', 2222))
+server_socket.bind(('0.0.0.0', PORT))
 
 
 server_socket.listen(5)
@@ -77,8 +82,8 @@ while True:
             if not command:
                 print("no command")
                 break
-            channel.send(command)
-
+            else:
+                channel.send(server.welcome_message())
             if command == b"\r":
                 if output.strip() == "ls":
                     print("test ls")
@@ -88,6 +93,7 @@ while True:
                 
                 result = f"Command received: {output}\r"
                 channel.send(result.encode('utf-8'))
+                channel.send(command)
                 channel.send("\n".encode('utf-8'))
 
                 output = ""
