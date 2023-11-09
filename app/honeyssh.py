@@ -1,11 +1,16 @@
+import subprocess
 import threading
 import paramiko
+import re
 import socket
 import os
 from subprocess import *
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 PORT = 2222
+ABSOLUTE_PATH = os.path.dirname(__file__)
+RELATIVE_PATH = "home"
+FULL_PATH = os.path.join(ABSOLUTE_PATH, RELATIVE_PATH)
 
 
 # Create a class to handle SSH connections
@@ -81,7 +86,7 @@ while True:
         channel.send("\n".encode('utf-8'))
 
 
-    output = []
+    output = ""
     while True:
         try:
             command = channel.recv(2048)
@@ -89,19 +94,40 @@ while True:
                 print("no command")
                 break
             if command == b"\r":
-                cmds = output.split(" ,")
+                print("output ",output)
+                cmds = re.split(';&&,| ', output)
+
                 print("cmds ",cmds)
-                if cmds[0] == "ls":
-                    os.system(f"cd app/home/ && ${output}")
+                if cmds[0] == "dir":
+                    command_cmd = f" cd {FULL_PATH} && {output}"
+                    result = subprocess.check_output(command_cmd, shell=True)
+                    channel.send("\n"+result.decode("utf-8"))
+                
+                elif cmds[0] == "type":
+                    command_cmd = f" cd {FULL_PATH} && {output}"
+                    result = subprocess.check_output(command_cmd, shell=True)
+                    channel.send("\n"+result.decode("utf-8"))
+
+                elif cmds[0] == "echo":
+                    command_cmd = f" cd {FULL_PATH} && {output}"
+                    result = subprocess.check_output(command_cmd, shell=True)
+                    channel.send("\n"+result.decode("utf-8"))
+
                 elif cmds[0] == "q":
                     channel.send("\n".encode('utf-8'))
                     transport.close()
-                
+                    break
+             
                 # result = f"Command received: {output}\r"
                 # channel.send(result.encode('utf-8'))
-                channel.send("\n".encode('utf-8'))
+                channel.send("\r".encode('utf-8'))
 
                 output = ""
+            elif command == b"\x7f":
+                print("cancel")
+                output = output[:-1]
+                print("output ",output)
+                channel.send(output)
 
             else:
                 output+= command.decode('utf-8')
