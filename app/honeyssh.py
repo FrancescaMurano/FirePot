@@ -81,7 +81,7 @@ while True:
         channel.send("\n".encode('utf-8'))
 
 
-    output = ""
+    output = []
     while True:
         try:
             command = channel.recv(2048)
@@ -89,21 +89,22 @@ while True:
                 print("no command")
                 break
             if command == b"\r":
-                if output.strip() == "ls":
-                    print("test ls")
-                elif output.strip() == "q":
+                print(output[0])
+                if output[0] == b"ls":
+                    os.system(f"cd app/home/ && ${output}")
+                elif output[0] == "q":
                     channel.send("\n".encode('utf-8'))
                     exit(0)
                 
-                result = f"Command received: {output}\r"
-                channel.send(result.encode('utf-8'))
-                channel.send(command)
+                # result = f"Command received: {output}\r"
+                # channel.send(result.encode('utf-8'))
                 channel.send("\n".encode('utf-8'))
 
-                output = ""
+                output = []
 
             else:
-                output+= command.decode('utf-8')
+                output.append(command.decode('utf-8'))
+                channel.send(command.decode('utf-8'))
 
         except Exception as e:
             print(f"Error: {str(e)}")
