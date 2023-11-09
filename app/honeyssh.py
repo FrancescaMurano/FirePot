@@ -49,6 +49,7 @@ print("Waiting for SSH connections...")
 # Generate the host key file (if it doesn't exist)
 host_key_file = "static_host_key"
 host_key = paramiko.RSAKey.generate(2048)
+
 if not os.path.exists(host_key_file):
     print("not exists")
     host_key.write_private_key_file(host_key_file)
@@ -75,6 +76,9 @@ while True:
         print("No session created.")
         transport.close()
         continue
+    else:
+        channel.send(server.welcome_message())
+        
     output = ""
     while True:
         try:
@@ -82,8 +86,6 @@ while True:
             if not command:
                 print("no command")
                 break
-            else:
-                channel.send(server.welcome_message())
             if command == b"\r":
                 if output.strip() == "ls":
                     print("test ls")
