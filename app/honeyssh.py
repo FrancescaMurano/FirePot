@@ -20,7 +20,7 @@ class SSHServer(paramiko.ServerInterface):
 
     def check_auth_password(self, username, password):
         if username == "root" and password == "root":
-            print("ok")
+            print("login success")
             return paramiko.AUTH_SUCCESSFUL
         return paramiko.AUTH_FAILED
 
@@ -33,7 +33,7 @@ class SSHServer(paramiko.ServerInterface):
         return True
     
     def welcome_message(self):
-        return "=========================\n-- Welcome to SSH Service --\n=========================\n".encode('utf-8')
+        return "=========-- Welcome to SSH Service --=========================\n".encode('utf-8')
    
 
 # Create a socket for the SSH server
@@ -78,7 +78,9 @@ while True:
         continue
     else:
         channel.send(server.welcome_message())
-        
+        channel.send("\n".encode('utf-8'))
+
+
     output = ""
     while True:
         try:
