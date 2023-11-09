@@ -89,21 +89,22 @@ while True:
                 print("no command")
                 break
             if command == b"\r":
-                print(output[0])
-                if output[0] == b"ls":
+                cmds = output.split(" ,")
+                print("cmds ",cmds)
+                if cmds[0] == "ls":
                     os.system(f"cd app/home/ && ${output}")
-                elif output[0] == "q":
+                elif cmds[0] == "q":
                     channel.send("\n".encode('utf-8'))
-                    exit(0)
+                    transport.close()
                 
                 # result = f"Command received: {output}\r"
                 # channel.send(result.encode('utf-8'))
                 channel.send("\n".encode('utf-8'))
 
-                output = []
+                output = ""
 
             else:
-                output.append(command.decode('utf-8'))
+                output+= command.decode('utf-8')
                 channel.send(command.decode('utf-8'))
 
         except Exception as e:
