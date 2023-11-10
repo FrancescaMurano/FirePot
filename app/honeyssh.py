@@ -118,7 +118,7 @@ while True:
 
                 for cmd in multiple_cmds:
                     cmd = cmd.lstrip()
-                    prefix = ("dir","ls","type","echo")
+                    prefix = ("dir","ls","type","echo","cat")
                     if cmd.startswith(prefix):
                         result = subprocess.run(output, shell=True,cwd=FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                         channel.send(result.stdout)
