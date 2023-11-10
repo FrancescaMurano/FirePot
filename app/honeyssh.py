@@ -11,8 +11,8 @@ PORT = 2222
 ABSOLUTE_PATH = os.path.dirname(__file__)
 RELATIVE_PATH = "home"
 FULL_PATH = os.path.join(ABSOLUTE_PATH, RELATIVE_PATH)
-
-
+START = '\r\ndebian@root: '.encode('utf-8')
+BANNER = "SSH-2.0-OpenSSH_8.2 debian"
 # Create a class to handle SSH connections
 class SSHServer(paramiko.ServerInterface):
     def __init__(self):
@@ -36,10 +36,6 @@ class SSHServer(paramiko.ServerInterface):
     def check_channel_shell_request(self, channel):
     # Allow the shell request
         return True
-    
-    def welcome_message(self):
-        return "=========-- Welcome to SSH Service --=========================\n".encode('utf-8')
-   
 
 # Create a socket for the SSH server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -64,13 +60,19 @@ while True:
 
 
     transport = paramiko.Transport(client_socket)
+    transport.local_version = BANNER
     # Load the static host key
     transport.load_server_moduli()
     transport.add_server_key(host_key)
 
+
     server = SSHServer()
-    
-    transport.start_server(server=server)
+
+    try:
+        transport.start_server(server=server)
+
+    except paramiko.SSHException:
+        raise Exception("SSH connection failed.")
 
     print(f"Connection from {addr[0]}:{addr[1]}")
 
@@ -82,60 +84,76 @@ while True:
         transport.close()
         continue
     else:
-        channel.send(server.welcome_message())
-        channel.send("\n".encode('utf-8'))
+        # channel.send(server.welcome_message())
+        channel.send(START)
 
 
     output = ""
     while True:
         try:
+           
             command = channel.recv(2048)
             if not command:
                 print("no command")
                 break
             if command == b"\r":
+                channel.send("\r\n".encode('utf-8'))  
+
                 print("output ",output)
                 cmds = re.split(';&&,| ', output)
 
                 print("cmds ",cmds)
                 if cmds[0] == "dir":
-                    command_cmd = f" cd {FULL_PATH} && {output}"
+                    command_cmd = f"cd {FULL_PATH} && {output}"
                     result = subprocess.check_output(command_cmd, shell=True)
-                    channel.send("\n"+result.decode("utf-8"))
+                    print (result.decode("utf-8"))
+                    channel.send(result)
+                    channel.send(START)
                 
                 elif cmds[0] == "type":
-                    command_cmd = f" cd {FULL_PATH} && {output}"
+                    command_cmd = f"cd {FULL_PATH} && {output}"
                     result = subprocess.check_output(command_cmd, shell=True)
-                    channel.send("\n"+result.decode("utf-8"))
+                    channel.send(result)
+                    channel.send(START)
+
 
                 elif cmds[0] == "echo":
-                    command_cmd = f" cd {FULL_PATH} && {output}"
+                    command_cmd = f"cd {FULL_PATH} && {output}"
                     result = subprocess.check_output(command_cmd, shell=True)
-                    channel.send("\n"+result.decode("utf-8"))
+                    channel.send(result)
+                    channel.send(START)
 
-                elif cmds[0] == "q":
-                    channel.send("\n".encode('utf-8'))
-                    transport.close()
-                    break
+              
+
+                else:
+                    channel.send(f"{cmds[0]} is not recognized.".encode('utf-8'))
+                    channel.send(START)
+
              
                 # result = f"Command received: {output}\r"
-                # channel.send(result.encode('utf-8'))
-                channel.send("\r".encode('utf-8'))
 
                 output = ""
             elif command == b"\x7f":
                 print("cancel")
                 output = output[:-1]
-                print("output ",output)
-                channel.send(output)
+                channel.send(command)
+                # print("output ",output)
+                # channel.send(output)
 
+            elif command == b'\x03':
+                    channel.send("\r\n".encode('utf-8'))
+                    transport.close()
+                    
             else:
                 output+= command.decode('utf-8')
-                channel.send(command.decode('utf-8'))
+                channel.send(command)
 
         except Exception as e:
             print(f"Error: {str(e)}")
-            break
+            channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
+            channel.send(START)
+            output = ""
+
 
     channel.close()
     transport.close()
