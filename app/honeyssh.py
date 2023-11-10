@@ -118,7 +118,7 @@ while True:
 
                 for cmd in multiple_cmds:
                     cmd = cmd.lstrip()
-                    prefix = ("dir","ls","type","echo","cat")
+                    prefix = ("dir","ls","type","echo","cat","clear")
                     if cmd.startswith(prefix):
                         result = subprocess.run(output, shell=True,cwd=FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                         channel.send(result.stdout)
@@ -127,6 +127,7 @@ while True:
                     elif cmd.startswith("whoaim"):
                         channel.send("root\debian")
                         channel.send(START)
+
 
                     else:
                         channel.send("Error: the sintax of the command is incorrect")
@@ -152,7 +153,10 @@ while True:
 
         except Exception as e:
             print(f"Error: {str(e)}")
+
             channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
+            channel.send(str(e).encode("utf-8"))
+
             channel.send(START)
             output = ""
 
