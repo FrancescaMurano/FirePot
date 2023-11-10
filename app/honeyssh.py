@@ -86,6 +86,8 @@ while True:
         raise Exception("SSH connection failed.")
     except ConnectionResetError as connectionerror:
         print(connectionerror)
+    except EOFError as oeferror:
+        print(oeferror)
 
     print(f"Connection from {addr[0]}:{addr[1]}")
 
