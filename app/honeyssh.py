@@ -12,8 +12,15 @@ ABSOLUTE_PATH = os.path.dirname(__file__)
 RELATIVE_PATH = "home"
 FULL_PATH = os.path.join(ABSOLUTE_PATH, RELATIVE_PATH)
 START = '\r\ndebian@root: '.encode('utf-8')
-BANNER = "SSH-2.0-OpenSSH_8.2 debian"
-# Create a class to handle SSH connections
+BANNER = "SSH-2.0-OpenSSH_5.3"
+
+# commands
+UP_KEY = "\x1b[A".encode()
+DOWN_KEY = "\x1b[B".encode()
+RIGHT_KEY = "\x1b[C".encode()
+LEFT_KEY = "\x1b[D".encode()
+BACK_KEY = "\x7f".encode()
+
 class SSHServer(paramiko.ServerInterface):
     def __init__(self):
         self.event = threading.Event()
@@ -61,6 +68,7 @@ while True:
 
     transport = paramiko.Transport(client_socket)
     transport.local_version = BANNER
+
     # Load the static host key
     transport.load_server_moduli()
     transport.add_server_key(host_key)
@@ -91,54 +99,48 @@ while True:
     output = ""
     while True:
         try:
-           
             command = channel.recv(2048)
+
             if not command:
                 print("no command")
                 break
+
+            # excape commands
+            if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
+                continue
+
             if command == b"\r":
                 channel.send("\r\n".encode('utf-8'))  
 
                 print("output ",output)
-                cmds = re.split(';&&,| ', output)
 
-                print("cmds ",cmds)
-                if cmds[0] == "dir":
-                    command_cmd = f"cd {FULL_PATH} && {output}"
-                    result = subprocess.check_output(command_cmd, shell=True)
-                    print (result.decode("utf-8"))
-                    channel.send(result)
-                    channel.send(START)
-                
-                elif cmds[0] == "type":
-                    command_cmd = f"cd {FULL_PATH} && {output}"
-                    result = subprocess.check_output(command_cmd, shell=True)
-                    channel.send(result)
-                    channel.send(START)
+                multiple_cmds = re.split(r"[;&&]", output)
 
+                for cmd in multiple_cmds:
+                    cmd = cmd.lstrip()
+                    prefix = ("dir","ls","type","echo")
+                    if cmd.startswith(prefix):
+                        result = subprocess.run(output, shell=True,cwd=FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                        channel.send(result.stdout)
+                        channel.send(START)
 
-                elif cmds[0] == "echo":
-                    command_cmd = f"cd {FULL_PATH} && {output}"
-                    result = subprocess.check_output(command_cmd, shell=True)
-                    channel.send(result)
-                    channel.send(START)
+                    elif cmd.startswith("whoaim"):
+                        channel.send("root\debian")
+                        channel.send(START)
 
-              
+                    else:
+                        channel.send("Error: the sintax of the command is incorrect")
+                        channel.send(START)
 
-                else:
-                    channel.send(f"{cmds[0]} is not recognized.".encode('utf-8'))
-                    channel.send(START)
-
-             
-                # result = f"Command received: {output}\r"
 
                 output = ""
+
             elif command == b"\x7f":
-                print("cancel")
-                output = output[:-1]
-                channel.send(command)
-                # print("output ",output)
-                # channel.send(output)
+                if output: # cancel only user input 
+                    output = output[:-1]
+                    channel.send(b'\x08')
+                    channel.send(b' \x08')
+
 
             elif command == b'\x03':
                     channel.send("\r\n".encode('utf-8'))
