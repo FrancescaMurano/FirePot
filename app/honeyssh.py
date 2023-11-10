@@ -124,10 +124,9 @@ while True:
                         channel.send(result.stdout)
                         channel.send(START)
 
-                    elif cmd.startswith("whoaim"):
+                    elif cmd.startswith("whoami"):
                         channel.send("root\debian")
                         channel.send(START)
-
 
                     else:
                         channel.send("Error: the sintax of the command is incorrect")
