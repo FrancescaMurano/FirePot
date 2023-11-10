@@ -7,10 +7,11 @@ import os
 from subprocess import *
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
+
 PORT = 2222
 ABSOLUTE_PATH = os.path.dirname(__file__)
 RELATIVE_PATH = "home"
-FULL_PATH = os.path.join(ABSOLUTE_PATH, RELATIVE_PATH)
+START_FULL_PATH = os.path.join(ABSOLUTE_PATH, RELATIVE_PATH)
 START = '\r\ndebian@root: '.encode('utf-8')
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
@@ -34,7 +35,7 @@ class SSHServer(paramiko.ServerInterface):
 
     def check_auth_password(self, username, password):
         if username == "root" and password == "root":
-            print("login success")
+            # print("login success")
             return paramiko.AUTH_SUCCESSFUL
         return paramiko.AUTH_FAILED
 
@@ -55,7 +56,7 @@ server_socket.listen(5)
 
 print("Waiting for SSH connections...")
 
-
+current_path = START_FULL_PATH
 # Generate the host key file (if it doesn't exist)
 host_key_file = "static_host_key"
 host_key = paramiko.RSAKey.generate(2048)
@@ -83,6 +84,8 @@ while True:
 
     except paramiko.SSHException:
         raise Exception("SSH connection failed.")
+    except ConnectionResetError as connectionerror:
+        print(connectionerror)
 
     print(f"Connection from {addr[0]}:{addr[1]}")
 
@@ -122,12 +125,28 @@ while True:
                     cmd = cmd.lstrip()
                     prefix = ("dir","ls","type","echo","cat","clear")
                     if cmd.startswith(prefix):
-                        result = subprocess.run(output, shell=True,cwd=FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                        result = subprocess.run(output, shell=True,cwd=current_path, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                         channel.send(result.stdout)
                         channel.send(START)
 
                     elif cmd.startswith("whoami"):
                         channel.send("root\debian")
+                        channel.send(START)
+                    
+                    elif cmd.startswith("pwd"):
+                        channel.send("home")
+                        channel.send(START)
+                    
+                    elif cmd.startswith("cd"):
+                        if ".." in cmd or "-" in cmd:
+                            result = subprocess.run("cd .", shell=True,cwd=START_FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                            current_path = START_FULL_PATH
+                        else:
+                            result = subprocess.run(output, shell=True,cwd=START_FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                            current_path = os.path.join(START_FULL_PATH,cmd.split(" ")[1])
+
+                            channel.send(result.stdout)
+
                         channel.send(START)
 
                     else:
