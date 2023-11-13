@@ -1,17 +1,15 @@
-import subprocess
 import threading
 import paramiko
 import re
 import socket
 import os
 from subprocess import *
+from utils.utils_commands import *
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
 PORT = 2222
-ABSOLUTE_PATH = os.path.dirname(__file__)
-RELATIVE_PATH = "home"
-START_FULL_PATH = os.path.join(ABSOLUTE_PATH, RELATIVE_PATH)
+
 START = '\r\ndebian@root: '.encode('utf-8')
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
@@ -25,8 +23,7 @@ BACK_KEY = "\x7f".encode()
 class SSHServer(paramiko.ServerInterface):
     def __init__(self):
         self.event = threading.Event()
-        self.banner_timeout = 200 # It was 15
-
+        self.banner_timeout = 200 
 
     def check_channel_request(self, kind, chanid):
         if kind == "session":
@@ -35,7 +32,6 @@ class SSHServer(paramiko.ServerInterface):
 
     def check_auth_password(self, username, password):
         if username == "root" and password == "root":
-            # print("login success")
             return paramiko.AUTH_SUCCESSFUL
         return paramiko.AUTH_FAILED
 
@@ -47,6 +43,10 @@ class SSHServer(paramiko.ServerInterface):
     # Allow the shell request
         return True
 
+ 
+    # def get_banner(self):
+    #     return b"SSH-2.0-OpenSSH_5.3"
+
 # Create a socket for the SSH server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('0.0.0.0', PORT))
@@ -56,7 +56,6 @@ server_socket.listen(5)
 
 print("Waiting for SSH connections...")
 
-current_path = START_FULL_PATH
 # Generate the host key file (if it doesn't exist)
 host_key_file = "static_host_key"
 host_key = paramiko.RSAKey.generate(2048)
@@ -67,7 +66,6 @@ if not os.path.exists(host_key_file):
 
 while True:
     client_socket, addr = server_socket.accept()
-
 
     transport = paramiko.Transport(client_socket)
     transport.local_version = BANNER
@@ -106,6 +104,7 @@ while True:
     output = ""
     while True:
         try:
+
             command = channel.recv(2048)
 
             if not command:
@@ -119,57 +118,32 @@ while True:
             if command == b"\r":
                 channel.send("\r\n".encode('utf-8'))  
 
-                print("output ",output)
-
                 multiple_cmds = re.split(r"[;&&]", output)
+                results = []
 
-                for cmd in multiple_cmds:
+                for cmd in (multiple_cmds):
                     cmd = cmd.lstrip()
-                    prefix = ("dir","ls","type","echo","cat","clear")
-                    if cmd.startswith(prefix):
-                        result = subprocess.run(output, shell=True,cwd=current_path, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                        channel.send(result.stdout)
-                        channel.send(START)
-
-                    elif cmd.startswith("whoami"):
-                        channel.send("root\debian")
-                        channel.send(START)
-                    
-                    elif cmd.startswith("pwd"):
-                        channel.send("home")
-                        channel.send(START)
-                    
-                    elif cmd.startswith("cd"):
-                        if ".." in cmd or "-" in cmd:
-                            result = subprocess.run("cd .", shell=True,cwd=START_FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                            current_path = START_FULL_PATH
-                        else:
-                            result = subprocess.run(output, shell=True,cwd=START_FULL_PATH, stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                            current_path = os.path.join(START_FULL_PATH,cmd.split(" ")[1])
-
-                            channel.send(result.stdout)
-
-                        channel.send(START)
-
-                    else:
-                        channel.send("Error: the sintax of the command is incorrect")
-                        channel.send(START)
-
+                    result,error = exec_command(cmd)
+                    results.append(result)
+                
+                for res in results:
+                    channel.send(res.encode("utf-8"))
+                channel.send(START)
 
                 output = ""
 
-            elif command == b"\x7f":
-                if output: # cancel only user input 
+            elif command == b"\x7f": # cancel only user input 
+                if output: 
                     output = output[:-1]
                     channel.send(b'\x08')
                     channel.send(b' \x08')
 
 
-            elif command == b'\x03':
+            elif command == b'\x03': # command to quit
                     channel.send("\r\n".encode('utf-8'))
                     transport.close()
-                    
-            else:
+                     
+            else: # concat imput
                 output+= command.decode('utf-8')
                 channel.send(command)
 
@@ -178,8 +152,8 @@ while True:
 
             channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
             channel.send(str(e).encode("utf-8"))
-
             channel.send(START)
+
             output = ""
 
 
