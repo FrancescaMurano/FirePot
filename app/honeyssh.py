@@ -9,8 +9,7 @@ from utils.utils_commands import *
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
 PORT = 2222
-
-START = '\r\ndebian@root: '.encode('utf-8')
+p = Path()
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
 # commands
@@ -50,6 +49,7 @@ class SSHServer(paramiko.ServerInterface):
 # Create a socket for the SSH server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_socket.bind(('0.0.0.0', PORT))
+START = p.get_cli_display_path().encode('utf-8')
 
 
 server_socket.listen(5)
@@ -103,6 +103,8 @@ while True:
 
     output = ""
     while True:
+        START = p.get_cli_display_path().encode('utf-8')
+        print("START ",START)
         try:
 
             command = channel.recv(2048)
@@ -128,7 +130,8 @@ while True:
                 
                 for res in results:
                     channel.send(res.encode("utf-8"))
-                channel.send(START)
+
+                channel.send(p.get_cli_display_path().encode('utf-8'))
 
                 output = ""
 
@@ -149,10 +152,9 @@ while True:
 
         except Exception as e:
             print(f"Error: {str(e)}")
-
             channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
             channel.send(str(e).encode("utf-8"))
-            channel.send(START)
+            channel.send(p.get_cli_display_path().encode('utf-8'))
 
             output = ""
 
