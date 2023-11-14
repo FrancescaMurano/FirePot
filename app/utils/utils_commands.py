@@ -66,7 +66,7 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
 
         elif cmd.startswith("ls"):
-            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            result = subprocess.run("ls -C", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
