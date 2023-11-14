@@ -6,7 +6,7 @@ from utils.utils_path import Path
 WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
     "dir": ["dir","dir -R"],
-    "ls": ["ls","ls -R"],
+    "ls": ["ls","ls -R",],
     "cat": ["cat psw.txt", "cat credit_cards.txt", "cat p_key.pkcs1", "cat user.txt"],
     "type": ["type psw.txt", "type credit_cards.txt", "type p_key.pkcs1", "type user.txt"],
     "echo": ["echo"],
@@ -45,7 +45,12 @@ def exec_command(cmd: str):
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
 
-        elif cmd.startswith("ls -C") or cmd.startswith("dir") :
+        elif cmd.startswith("ls") or cmd.startswith("dir") :
+            
+            # to force the space elimination
+            if cmd.startswith("ls"):
+                cmd+=" -C"
+
             result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
