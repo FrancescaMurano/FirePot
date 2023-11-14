@@ -49,7 +49,7 @@ def exec_command(cmd: str):
 
             # to force the space elimination
             if cmd.startswith("ls"):
-                cmd="ls -C"
+                cmd.join(" -C")
                 
             result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
