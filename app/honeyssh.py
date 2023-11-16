@@ -5,7 +5,7 @@ import socket
 import os
 from subprocess import *
 from utils.utils_commands import *
-
+from log_requests import Requests
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
 PORT = 2222
@@ -88,7 +88,6 @@ while True:
         print(oeferror)
 
     print(f"Connection from {addr[0]}:{addr[1]}")
-
  
     channel = transport.accept(20)
 
@@ -97,16 +96,17 @@ while True:
         transport.close()
         continue
     else:
-        # channel.send(server.welcome_message())
         channel.send(START)
 
-
     output = ""
-    while True:
-        START = p.get_cli_display_path().encode('utf-8')
-        print("START ",START)
-        try:
+    server = ElasticServer()
+    request = Requests()
 
+    while True:
+
+        START = p.get_cli_display_path().encode('utf-8')
+        
+        try:
             command = channel.recv(2048)
 
             if not command:
@@ -126,6 +126,7 @@ while True:
                 for cmd in (multiple_cmds):
                     cmd = cmd.lstrip()
                     result,error = exec_command(cmd)
+                    request.add_request(cmd)
                     results.append(result)
                 
                 for res in results:
@@ -157,7 +158,9 @@ while True:
             channel.send(p.get_cli_display_path().encode('utf-8'))
 
             output = ""
-
+            
+        finally:
+            server.insert_data(request.all_info_json())
 
     channel.close()
     transport.close()

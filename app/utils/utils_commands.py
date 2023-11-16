@@ -15,7 +15,6 @@ WHITELIST_COMMANDS = {
     "whoami": ["whoami"],
 }
 
-
 def check_command(cmd: str):
     echo_pattern = r'^echo\s+[A-Za-z0-9\s]+$'
     found = False
