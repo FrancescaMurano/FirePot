@@ -26,12 +26,10 @@ class ElasticServer:
         self.es.index(
             index='ip_info',
             document=json_ip_data
-    )
+        )
+
     def insert_ip_request(self,json_ip_requests):
-        # add time
-        json_ip_requests["time"] = datetime.datetime.now().time().replace(microsecond=0).isoformat()
-        # add date 
-        json_ip_requests["date"] =  datetime.datetime.now().date().isoformat()
+              
         self.es.index(
             index='commands',
             document=json_ip_requests

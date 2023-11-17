@@ -6,6 +6,8 @@ import os
 from subprocess import *
 from utils.utils_commands import *
 from log_requests import Requests
+from elastic.elasticserver import ElasticServer
+
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
 PORT = 2222
@@ -74,7 +76,6 @@ while True:
     transport.load_server_moduli()
     transport.add_server_key(host_key)
 
-
     server = SSHServer()
 
     try:
@@ -100,7 +101,7 @@ while True:
 
     output = ""
     server = ElasticServer()
-    request = Requests()
+    request = Requests(ip=addr[0])
 
     while True:
 
@@ -126,7 +127,8 @@ while True:
                 for cmd in (multiple_cmds):
                     cmd = cmd.lstrip()
                     result,error = exec_command(cmd)
-                    request.add_request(cmd)
+                    #request.add_request(cmd)
+                    server.insert_ip_request(request.get_request_json(cmd))
                     results.append(result)
                 
                 for res in results:
@@ -160,7 +162,8 @@ while True:
             output = ""
             
         finally:
-            server.insert_data(request.all_info_json())
+            server.insert_ip_data(request.get_ip_info())
+           
 
     channel.close()
     transport.close()
