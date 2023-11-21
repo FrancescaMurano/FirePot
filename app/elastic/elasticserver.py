@@ -1,5 +1,4 @@
 from elasticsearch import Elasticsearch
-import datetime
 
 class ElasticServer:
 
@@ -24,7 +23,7 @@ class ElasticServer:
 
     def insert_ip_data(self,json_ip_data):
         self.es.index(
-            index='ip_info',
+            index='info_ip',
             document=json_ip_data
         )
 
@@ -34,5 +33,20 @@ class ElasticServer:
             index='commands',
             document=json_ip_requests
     )
+        
+    def delete(self,id):
+        self.es.delete(index='commands',id=id)
+
+    def insert_prova(self,json_ip_data):
+        doc={"name":'London', "location": { 
+            "lat": -70.3,
+            "lon": 41.12}  }
+        self.es.index(
+            index='place',
+            document=doc
+        )
+
+        
+
 
 

@@ -1,3 +1,4 @@
 paramiko
 elasticsearch==8.11.0
+pymodbus==3.5.0
 requests
