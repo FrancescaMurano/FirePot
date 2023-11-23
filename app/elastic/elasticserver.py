@@ -20,7 +20,6 @@ class ElasticServer:
                     ca_certs="config/certs/http_ca.crt",
                     basic_auth=(username,password))
 
-
     def insert_ip_data(self,json_ip_data):
         self.es.index(
             index='info_ip',
@@ -28,25 +27,27 @@ class ElasticServer:
         )
 
     def insert_ip_request(self,json_ip_requests):
-              
         self.es.index(
             index='commands',
             document=json_ip_requests
     )
         
-    def delete(self,id):
-        self.es.delete(index='commands',id=id)
-
-    def insert_prova(self,json_ip_data):
-        doc={"name":'London', "location": { 
-            "lat": -70.3,
-            "lon": 41.12}  }
+    def insert_modbus_connection_request(self,json):
         self.es.index(
-            index='place',
-            document=doc
-        )
+            index='modbus_connection',
+            document=json
+    )
 
+    def insert_modbus_log_request(self,json):
+        self.es.index(
+            index='modbus_log',
+            document=json
+    )    
         
+    # def delete(self,id):
+    #     self.es.delete(index='commands',id=id)
+
+
 
 
 
