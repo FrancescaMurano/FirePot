@@ -1,4 +1,7 @@
 paramiko
 elasticsearch==8.11.0
 pymodbus==2.5.1
+Twisted==23.10.0
+twisted
 requests
+elasticsearch == 8.11.1
