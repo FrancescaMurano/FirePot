@@ -3,4 +3,4 @@ pymodbus==2.5.1
 Twisted==23.10.0
 twisted
 requests
-elasticsearch==8.11.1
+elasticsearch==8.11.0
