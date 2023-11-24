@@ -43,10 +43,9 @@ class SSHServer(paramiko.ServerInterface):
     def check_channel_shell_request(self, channel):
     # Allow the shell request
         return True
-
  
-    # def get_banner(self):
-    #     return b"SSH-2.0-OpenSSH_5.3"
+    def get_banner(self):
+        return ("SSH-2.0-OpenSSH_5.3\n",'en-US')
 
 # Create a socket for the SSH server
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -81,8 +80,8 @@ while True:
     try:
         transport.start_server(server=server)
 
-    except paramiko.SSHException:
-        raise Exception("SSH connection failed.")
+    except paramiko.SSHException as ssh:
+        print(ssh)
     except ConnectionResetError as connectionerror:
         print(connectionerror)
     except EOFError as oeferror:
