@@ -16,8 +16,7 @@ class Requests:
     def get_request_json(self,request: str):
 
         json_ip_request = {'ip': self.ip_info, 'command':request}
-        json_ip_request["time"] = datetime.datetime.now().time().replace(microsecond=0).isoformat()
-        json_ip_request["date"] =  datetime.datetime.now().date().isoformat()
+        json_ip_request["date"] =  datetime.datetime.now().isoformat()
 
         return json_ip_request
     
