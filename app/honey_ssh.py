@@ -157,12 +157,9 @@ while True:
             channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
             channel.send(str(e).encode("utf-8"))
             channel.send(p.get_cli_display_path().encode('utf-8'))
-
             output = ""
             
-        finally:
-            server.insert_ip_data(request.get_ip_info())
-           
-
+    
+    server.insert_ip_data(request.get_ip_info())
     channel.close()
     transport.close()
