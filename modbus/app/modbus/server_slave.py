@@ -11,7 +11,7 @@ ADDR = "0.0.0.0"
 PORT = 5002
 
 FORMAT = ('%(asctime)-15s %(message)s')
-log_path = os.path.join(os.getcwd(),"app","modbus","log_file.log")
+log_path = os.path.join(os.getcwd(),"modbus","app","modbus","log_file.log")
 logging.basicConfig(filename=log_path,format=FORMAT,datefmt='%Y-%m-%d %H:%M:%S')
 logging.getLogger().setLevel(logging.DEBUG)
 
@@ -35,17 +35,18 @@ class ServerSlave:
         self.context = ModbusServerContext(slaves=store, single=True)
 
     def read_file(self):
-        log_path = os.path.join(os.getcwd(),"app","modbus","log_file.log")
-
-        for line in Pygtail(log_path):
-            lines = line.split("\r\n")
-            for l in lines:
-                if l.find("Client Connected") != -1:
-                    r = ModbusConnectionRequest(l)
-                    self.elastic.insert_modbus_connection_request(r.get_json())
-                else:
-                    r = ModbusRequest(l)
-                    self.elastic.insert_modbus_log_request(r.get_json())
+        try:
+            for line in Pygtail(log_path):
+                lines = line.split("\r\n")
+                for l in lines:
+                    if l.find("Client Connected") != -1:
+                        r = ModbusConnectionRequest(l)
+                        self.elastic.insert_modbus_connection_request(r.get_json())
+                    else:
+                        r = ModbusRequest(l)
+                        self.elastic.insert_modbus_log_request(r.get_json())
+        except Exception as e:
+            print("Error")
 
     def run_server(self):
         StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT))
