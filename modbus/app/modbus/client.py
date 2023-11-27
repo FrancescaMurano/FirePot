@@ -41,7 +41,4 @@ discrete_in =  client.read_discrete_inputs(address=0, count=10, unit=0x01)
 print("discrete_input: ", discrete_in.bits)
 
 
-discrete_in =  client.read_discrete_inputs(address=0, count=10, unit=0x01)
-print("discrete_input: ", discrete_in.bits)
-
 

@@ -42,10 +42,10 @@ class ServerSlave:
             for l in lines:
                 if l.find("Client Connected") != -1:
                     r = ModbusConnectionRequest(l)
-                    # self.elastic.insert_modbus_connection_request(r.get_json())
+                    self.elastic.insert_modbus_connection_request(r.get_json())
                 else:
                     r = ModbusRequest(l)
-                    # self.elastic.insert_modbus_log_request(r.get_json())
+                    self.elastic.insert_modbus_log_request(r.get_json())
 
     def run_server(self):
         StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT))
