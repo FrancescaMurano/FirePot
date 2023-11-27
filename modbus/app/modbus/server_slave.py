@@ -11,17 +11,19 @@ ADDR = "0.0.0.0"
 PORT = 5002
 
 class ConnectionLogHandler(logging.StreamHandler):
+    
     def emit(self, record: LogRecord) -> None:
+        server = ElasticServer()
         log_message = self.format(record)
 
         if "Client Connected" in log_message:
             r1 = ModbusConnectionRequest(record.getMessage())
-            ElasticServer().insert_ip_data(get_ip_info(r1.get_ip()))
+            server.insert_ip_data(get_ip_info(r1.get_ip()))
             super().emit(record)
 
         elif "Data Received" in log_message or "Factory Request" in log_message:
             r2 = ModbusRequest(record.getMessage())
-            ElasticServer().insert_modbus_log_request(r2.get_json())
+            server.insert_modbus_log_request(r2.get_json())
             super().emit(record)
 
 pymodbus_logger = logging.getLogger("pymodbus")
