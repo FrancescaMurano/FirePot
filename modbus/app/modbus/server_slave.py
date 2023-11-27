@@ -14,6 +14,7 @@ FORMAT = ('%(asctime)-15s %(message)s')
 log_path = os.path.join(os.getcwd(),"modbus","app","modbus","log_file.log")
 logging.basicConfig(filename=log_path,format=FORMAT,datefmt='%Y-%m-%d %H:%M:%S')
 logging.getLogger().setLevel(logging.DEBUG)
+logging.getLogger().handlers[0].flush()
 
 class ServerSlave:
     def __init__(self) -> None:
@@ -40,11 +41,11 @@ class ServerSlave:
                 lines = line.split("\r\n")
                 for l in lines:
                     if l.find("Client Connected") != -1:
-                        r = ModbusConnectionRequest(l)
-                        self.elastic.insert_modbus_connection_request(r.get_json())
+                        r1 = ModbusConnectionRequest(l)
+                        self.elastic.insert_modbus_connection_request(r1.get_json())
                     else:
-                        r = ModbusRequest(l)
-                        self.elastic.insert_modbus_log_request(r.get_json())
+                        r2 = ModbusRequest(l)
+                        self.elastic.insert_modbus_log_request(r2.get_json())
         except Exception as e:
             print("Error")
 
