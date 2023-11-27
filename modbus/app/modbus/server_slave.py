@@ -18,12 +18,13 @@ class ConnectionLogHandler(logging.StreamHandler):
 
         if "Client Connected" in log_message:
             r1 = ModbusConnectionRequest(record.getMessage())
-            server.insert_ip_data(get_ip_info(r1.get_ip()))
+            print(log_message)
+            # server.insert_ip_data(get_ip_info(r1.get_ip()))
             super().emit(record)
 
         elif "Data Received" in log_message or "Factory Request" in log_message:
             r2 = ModbusRequest(record.getMessage())
-            server.insert_modbus_log_request(r2.get_json())
+            # server.insert_modbus_log_request(r2.get_json())
             super().emit(record)
 
 pymodbus_logger = logging.getLogger("pymodbus")
