@@ -38,12 +38,14 @@ class ServerSlave:
     def read_file(self):
         try:
             for line in Pygtail(log_path):
+                # print("line ",line)
                 lines = line.split("\r\n")
                 for l in lines:
                     if l.find("Client Connected") != -1:
+                        print(l)
                         r1 = ModbusConnectionRequest(l)
                         self.elastic.insert_modbus_connection_request(r1.get_json())
-                    else:
+                    elif l.find("Data Received:") != -1:
                         r2 = ModbusRequest(l)
                         self.elastic.insert_modbus_log_request(r2.get_json())
         except Exception as e:

@@ -3,20 +3,30 @@ from threading import Thread
 from modbus.server_slave import ServerSlave
 from twisted.internet import reactor
 from twisted.internet.threads import deferToThread
+import time
+
+def run_server():
+    s = ServerSlave()
+    s.run_server()
 
 def update_info_log():
     s = ServerSlave()
-    deferToThread(s.read_file)
+    while True:
+        s.read_file()
+        time.sleep(5)
 
 def main():
-    if not reactor.running:
-        loop = LoopingCall(f=update_info_log)
-        loop.start(5, now=False) # initially delay by time
-    
-        reactor.run()
+    server_thread = Thread(target=run_server)
+    server_thread.start()
+
+    log_thread = Thread(target=update_info_log)
+    log_thread.start()
+
+
+    server_thread.join()
+    log_thread.join()
    
 
 if __name__ == "__main__":
-    s = ServerSlave()
-    s.run_server()
     main()
+   
