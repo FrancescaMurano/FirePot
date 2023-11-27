@@ -1,11 +1,11 @@
 from pymodbus.client.sync import ModbusTcpClient
 from pymodbus import *
 
-SERVER = "127.0.0.1"
+SERVER = '34.17.52.4'
 PORT = 502
 
-client: ModbusTcpClient =  ModbusTcpClient(SERVER,PORT)
-
+client: ModbusTcpClient =  ModbusTcpClient(host=SERVER,port=PORT)
+print (client)
 # -------> read holding register
 read_hr =  client.read_holding_registers(address=0, count=10,unit=0x01)
 print("Holding register - ", read_hr.registers)
