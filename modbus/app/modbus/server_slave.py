@@ -11,7 +11,7 @@ ADDR = "0.0.0.0"
 PORT = 5002
 
 FORMAT = ('%(asctime)-15s %(message)s')
-log_path = os.path.join(os.getcwd(),"modbus","app","modbus","log_file.log")
+log_path = os.path.join("app","modbus","log_file.log")
 logging.basicConfig(filename=log_path,format=FORMAT,datefmt='%Y-%m-%d %H:%M:%S')
 logging.getLogger().setLevel(logging.DEBUG)
 logging.getLogger().handlers[0].flush()
