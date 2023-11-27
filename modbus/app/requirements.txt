@@ -4,3 +4,6 @@ twisted
 requests
 pygtail
 elasticsearch==8.11.0
+pyserial==3.5
+pyserial-asyncio==0.6
+asyncio==3.4.3 
