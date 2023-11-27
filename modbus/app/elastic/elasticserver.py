@@ -24,14 +24,11 @@ class ElasticServer:
         self.es.index(
             index = 'modbus_log',
             document = json,
-            timeout=200
     )    
         
     def insert_ip_data(self,json):
         self.es.index(
             index = 'modbus_ip',
             document = json,
-            timeout=200
-
     )
             
