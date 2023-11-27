@@ -2,14 +2,13 @@
 
 from threading import Thread
 from modbus.server_slave import ServerSlave
+from pymodbus.server.async_io import asyncio
 
 
 def main():
     s = ServerSlave()
-    t1 = Thread(target=s.run_server)
-    t1.start()
-   
+    s.run_server()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
    
