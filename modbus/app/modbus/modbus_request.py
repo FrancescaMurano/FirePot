@@ -1,32 +1,32 @@
 import re
+import datetime
 
 class ModbusConnectionRequest:
     def __init__(self, request: str) -> None:
 
         self.ip   = ""
         self.port = ""
-        self.data = ""
+        self.date = ""
         self.time = ""
 
-        reg_data = '(?P<data>\d{4}-\d{2}-\d{2})\s(?P<time>\d{2}:\d{2}:\d{2})'
         reg_ip = '(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
         reg_port = 'port=(?P<port>\d{1,5})'
 
         ip_search = re.search(reg_ip,request)
         port_search = re.search(reg_port,request)
-        data_search = re.search(reg_data,request)
 
-        if ip_search != None and port_search!=None and data_search!=None:
+        if ip_search != None and port_search!=None:
             self.ip = ip_search.group("ip")
             self.port = port_search.group("port")
-            self.data = data_search.group("data")
-            self.time = data_search.group("time")
+            self.date = datetime.datetime.now().isoformat()
+
+    def get_ip(self):
+        return self.ip
     
     def get_json(self):
 
         return {
-            'data':self.data,
-            'time':self.time,
+            'date':self.date,
             'ip':  self.ip,
             'port':self.port,
         }
@@ -34,23 +34,27 @@ class ModbusConnectionRequest:
 class ModbusRequest:
     def __init__(self, request: str) -> None:
 
-        self.data = ""
-        self.time = ""
-        self.message = ""
+        self.date = datetime.datetime.now().isoformat()
 
-        reg = '(?P<data>\d{4}-\d{2}-\d{2})\s(?P<time>\d{2}:\d{2}:\d{2})\s+(?P<msg>.+)'
+        reg1 = '(?P<type>Data\sReceived):\s(?P<request>.+)'
+        reg2 = '(?P<type>Factory\sRequest)\[(?P<request>[A-Za-z]+)'
 
-        search = re.search(reg,request)
+        search1 = re.search(reg1,request)
+        search2 = re.search(reg2,request)
 
-        if search != None:
-            self.data = search.group("data")
-            self.time = search.group("time")
-            self.message = search.group("msg")
+
+        if search1 != None:
+            self.type = search1.group("type")
+            self.request = search1.group("request")
+            
+        elif search2 != None:
+            self.type = search2.group("type")
+            self.request = search2.group("request")
     
     def get_json(self):
         return {
-            'data':self.data,
-            'time':self.time,
-            'msg':self.message,
+            'date': self.date,
+            'type': self.type,
+            'request':self.request,
         }
     

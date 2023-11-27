@@ -1,20 +1,34 @@
+from logging import LogRecord
 from pymodbus.server.asynchronous import StartTcpServer
 from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, ModbusServerContext
 from pymodbus.device import ModbusDeviceIdentification
 import logging,logging.handlers
 from elastic.elasticserver import ElasticServer
-import os
 from modbus.modbus_request import ModbusConnectionRequest,ModbusRequest
-from pygtail import Pygtail
+from utils.utils_ip_info import get_ip_info
 
 ADDR = "0.0.0.0"
 PORT = 5002
 
-FORMAT = ('%(asctime)-15s %(message)s')
-log_path = os.path.join("app","modbus","log_file.log")
-logging.basicConfig(filename=log_path,format=FORMAT,datefmt='%Y-%m-%d %H:%M:%S')
-logging.getLogger().setLevel(logging.DEBUG)
-logging.getLogger().handlers[0].flush()
+class ConnectionLogHandler(logging.StreamHandler):
+    def emit(self, record: LogRecord) -> None:
+        log_message = self.format(record)
+
+        if "Client Connected" in log_message:
+            r1 = ModbusConnectionRequest(record.getMessage())
+            ElasticServer().insert_ip_data(get_ip_info(r1.get_ip()))
+            super().emit(record)
+
+        elif "Data Received" in log_message or "Factory Request" in log_message:
+            r2 = ModbusRequest(record.getMessage())
+            ElasticServer().insert_modbus_log_request(r2.get_json())
+            super().emit(record)
+
+pymodbus_logger = logging.getLogger("pymodbus")
+
+pymodbus_logger.setLevel(logging.DEBUG)
+
+pymodbus_logger.addHandler(ConnectionLogHandler())
 
 class ServerSlave:
     def __init__(self) -> None:
@@ -34,22 +48,6 @@ class ServerSlave:
 
         # Server Context Creation
         self.context = ModbusServerContext(slaves=store, single=True)
-
-    def read_file(self):
-        try:
-            for line in Pygtail(log_path):
-                # print("line ",line)
-                lines = line.split("\r\n")
-                for l in lines:
-                    if l.find("Client Connected") != -1:
-                        print(l)
-                        r1 = ModbusConnectionRequest(l)
-                        self.elastic.insert_modbus_connection_request(r1.get_json())
-                    elif l.find("Data Received:") != -1:
-                        r2 = ModbusRequest(l)
-                        self.elastic.insert_modbus_log_request(r2.get_json())
-        except Exception as e:
-            print("Error")
 
     def run_server(self):
         StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT))

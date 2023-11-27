@@ -20,16 +20,15 @@ class ElasticServer:
                     # ca_certs="config/certs/http_ca.crt",
                     basic_auth=(username,password))
 
-        
-    def insert_modbus_connection_request(self,json):
-        self.es.index(
-            index='modbus_connection',
-            document=json
-    )
-
     def insert_modbus_log_request(self,json):
         self.es.index(
-            index='modbus_log',
-            document=json
+            index = 'modbus_log',
+            document = json
     )    
         
+    def insert_ip_data(self,json):
+        self.es.index(
+            index = 'modbus_ip',
+            document = json
+    )
+            

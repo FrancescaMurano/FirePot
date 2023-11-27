@@ -32,20 +32,6 @@ class ElasticServer:
             document=json_ip_requests
     )
         
-    def insert_modbus_connection_request(self,json):
-        self.es.index(
-            index='modbus_connection',
-            document=json
-    )
-
-    def insert_modbus_log_request(self,json):
-        self.es.index(
-            index='modbus_log',
-            document=json
-    )    
-        
-    # def delete(self,id):
-    #     self.es.delete(index='commands',id=id)
-
+ 
 
 
