@@ -36,9 +36,8 @@ def exec_command(cmd: str):
     error = ""
     print("cmd ",cmd)
     print("check ",check_command(cmd))
-
+    print(cmd.startswith("cd"))
     if check_command(cmd):
-
         if cmd.startswith("cd"):
             destination =  cmd.split(" ")[1] if len(cmd.split(" ")) > 1  else ''
             path.set_current_path(os.path.join(path.get_start_full_path(),destination))
@@ -48,7 +47,6 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
 
         elif cmd.startswith("ls"):
-
             # to force the space elimination
             result = subprocess.run("ls -C", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()

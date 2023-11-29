@@ -67,6 +67,7 @@ async def handle_client(reader, writer):
         except Exception as e:
             writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
             writer.write(p.get_cli_display_path().encode('utf-8'))
+            print(f"Error: {str(e)}")
             output = ""
             
     print("Closing connection")
