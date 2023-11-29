@@ -34,6 +34,9 @@ def exec_command(cmd: str):
     path = Path()
     output = ""
     error = ""
+    print("cmd ",cmd)
+    print("check ",check_command(cmd))
+
     if check_command(cmd):
 
         if cmd.startswith("cd"):
