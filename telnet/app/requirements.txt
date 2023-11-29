@@ -1,0 +1,5 @@
+paramiko
+Twisted==23.10.0
+twisted
+requests
+elasticsearch==8.11.0
