@@ -6,6 +6,7 @@ import logging,logging.handlers
 from elastic.elasticserver import ElasticServer
 from modbus.modbus_request import ModbusConnectionRequest,ModbusRequest
 from utils.utils_ip_info import get_ip_info
+from twisted.internet import protocol
 
 ADDR = "0.0.0.0"
 PORT = 5002
@@ -15,16 +16,13 @@ class ConnectionLogHandler(logging.StreamHandler):
     def emit(self, record: LogRecord) -> None:
         server = ElasticServer()
         log_message = self.format(record)
-
         if "Client Connected" in log_message:
-            r1 = ModbusConnectionRequest(record.getMessage())
-            print(log_message)
-            # server.insert_ip_data(get_ip_info(r1.get_ip()))
+            # r1 = ModbusConnectionRequest(record.getMessage())
             super().emit(record)
 
         elif "Data Received" in log_message or "Factory Request" in log_message:
             r2 = ModbusRequest(record.getMessage())
-            # server.insert_modbus_log_request(r2.get_json())
+            server.insert_modbus_log_request(r2.get_json())
             super().emit(record)
 
 pymodbus_logger = logging.getLogger("pymodbus")
@@ -53,4 +51,4 @@ class ServerSlave:
         self.context = ModbusServerContext(slaves=store, single=True)
 
     def run_server(self):
-        StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT))
+        StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT),on_connect=self.on_connect)

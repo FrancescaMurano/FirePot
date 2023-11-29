@@ -1,0 +1,3 @@
+root:r00t
+player:wins
+jennifer:black

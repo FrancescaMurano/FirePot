@@ -1,6 +1,5 @@
 
 
-from threading import Thread
 from modbus.server_slave import ServerSlave
 from pymodbus.server.async_io import asyncio
 
