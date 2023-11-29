@@ -74,7 +74,7 @@ async def handle_client(reader, writer):
  
  
 async def start_server():
-    server = await asyncio.start_server(handle_client, "127.0.0.1", PORT)
+    server = await asyncio.start_server(handle_client, "0.0.0.0", PORT)
     print("Server started")
     await server.serve_forever()
  
