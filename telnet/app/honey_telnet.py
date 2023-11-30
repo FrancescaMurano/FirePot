@@ -34,16 +34,18 @@ async def handle_client(reader, writer):
                 continue
 
             if command == b"\r\n":
-                multiple_cmds = re.split(r"[;&&]", output)
+                multiple_cmds = re.split(r"&&", output)
                 results = []
-
-                for cmd in (multiple_cmds):
-                    cmd = cmd.lstrip()
+                print("multiple",multiple_cmds)
+                multiple_cmds = [item for item in multiple_cmds if item != '']
+                for cmd in multiple_cmds:
+                    cmd = cmd.strip()
                     result,error = exec_command(cmd)
                     #server.insert_ip_request(request.get_request_json(cmd))
                     results.append(result)
                 
                 for res in results:
+                    print("ok")
                     res = res.encode("utf-8")
                     res = res.replace(b"  ",b"")
                     res = res.replace(b"\n",b"\r\n")
