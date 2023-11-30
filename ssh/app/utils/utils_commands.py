@@ -2,6 +2,7 @@ import subprocess
 import os
 import re
 from utils.utils_path import Path
+ERROR = "Error: the sintax of the command is incorrect"
 
 WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
@@ -80,9 +81,9 @@ def exec_command(cmd: str):
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
         else:
-            output = "Error:\tthe\tsintax\to\tth\tcommand\tis\tincorrect"
+            output = ERROR
         
         if error != None:
-            output = "Error:\tthe\tsintax\to\tth\tcommand\tis\tincorrect"
+            output = ERROR
 
     return (output,error)
