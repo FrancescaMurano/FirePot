@@ -1,5 +1,4 @@
 import os
-import pathlib
 
 class Path:
 
@@ -14,6 +13,8 @@ class Path:
     def __init__(self) -> None:
         if not hasattr(self,'initialized'):
             self.__start_full_path = os.path.join(os.getcwd(),"app","home")
+            # self.__start_full_path = os.path.join(os.getcwd(),"telnet","app","home")
+
             print("SELF PATH ",self.__start_full_path)
             self.__current_path = self.__start_full_path
             self.initialized = True

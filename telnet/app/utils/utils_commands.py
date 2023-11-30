@@ -2,16 +2,16 @@ import subprocess
 import os
 import re
 from utils.utils_path import Path
+ERROR = "Error: the sintax of the command is incorrect"
 
 WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
-    "dir": ["dir"],
     "ls": ["ls"],
     "cat": ["cat psw.txt", "cat credit_cards.json", "cat p_key.pkcs1", "cat user.txt"],
     "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
     "echo": ["echo"],
     "clear": ["clear"],
-    "pwd": ["clear"],
+    "pwd": ["pwd"],
     "whoami": ["whoami"],
 }
 
@@ -34,10 +34,8 @@ def exec_command(cmd: str):
     path = Path()
     output = ""
     error = ""
-    print("cmd ",cmd)
-    print("check ",check_command(cmd))
-    print(cmd.startswith("cd"))
     if check_command(cmd):
+
         if cmd.startswith("cd"):
             destination =  cmd.split(" ")[1] if len(cmd.split(" ")) > 1  else ''
             path.set_current_path(os.path.join(path.get_start_full_path(),destination))
@@ -47,20 +45,20 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
 
         elif cmd.startswith("ls"):
+
             # to force the space elimination
-            result = subprocess.run("ls -C", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
         
         elif cmd.startswith("pwd"):
-            # to force the space elimination
             output = "home"
             
         else:
             result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
-            output = result.stdout.decode("utf-8").replace(" Directory of C:\\Users\\fmurano\\Documents\\GitHub\\myhoneypot\\telnet\\app\\home"," ")
+            output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
 
     else:
@@ -72,7 +70,7 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
 
         elif cmd.startswith("ls"):
-            result = subprocess.run("ls -C", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
@@ -80,10 +78,9 @@ def exec_command(cmd: str):
         elif cmd.startswith("dir"):
             result = subprocess.run("dir", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
-            output = result.stdout.decode("utf-8").replace(" Directory of C:\\Users\\fmurano\\Documents\\GitHub\\myhoneypot\\telnet\\app\\home"," ")
+            output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
         else:
-            output = "Error: the sintax of the command is incorrect"
-   
-    return (output,error)
+            output = ERROR
 
+    return (output,error)
