@@ -131,7 +131,7 @@ while True:
                 
                 for res in results:
                     res = res.encode("utf-8")
-                    res = res.replace(b" ",b"")
+                    res = res.replace(b"  ",b"")
                     res = res.replace(b"\n",b"\r\n")
 
                     channel.send(res)
