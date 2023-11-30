@@ -131,10 +131,9 @@ while True:
                 
                 for res in results:
                     res = res.encode("utf-8")
-                    print("res",res)
                     res = res.replace(b" ",b"")
                     res = res.replace(b"\n",b"\r\n")
-                    print("res2",res)
+
                     channel.send(res)
 
                 channel.send(p.get_cli_display_path().encode('utf-8'))

@@ -5,7 +5,6 @@ from utils.utils_path import Path
 
 WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
-    "dir": ["dir","dir -R"],
     "ls": ["ls"],
     "cat": ["cat psw.txt", "cat credit_cards.json", "cat p_key.pkcs1", "cat user.txt"],
     "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
@@ -53,7 +52,6 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
         
         elif cmd.startswith("pwd"):
-            # to force the space elimination
             output = "home"
             
         else:
@@ -83,5 +81,8 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
         else:
             output = "Error:\tthe\tsintax\to\tth\tcommand\tis\tincorrect"
-   
+        
+        if error != None:
+            output = "Error:\tthe\tsintax\to\tth\tcommand\tis\tincorrect"
+
     return (output,error)
