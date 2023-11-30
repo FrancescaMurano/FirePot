@@ -5,7 +5,7 @@ from utils.utils_path import Path
 
 WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
-    "dir": ["dir"],
+    "dir": ["dir","dir -R"],
     "ls": ["ls"],
     "cat": ["cat psw.txt", "cat credit_cards.json", "cat p_key.pkcs1", "cat user.txt"],
     "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
@@ -61,7 +61,6 @@ def exec_command(cmd: str):
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
-            print(error,result)
 
     else:
         if cmd.startswith("cd"):

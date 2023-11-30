@@ -130,7 +130,7 @@ while True:
                     results.append(result)
                 
                 for res in results:
-                    channel.send(res.encode("utf-8"))
+                    channel.send(res.strip().encode("utf-8"))
 
                 channel.send(p.get_cli_display_path().encode('utf-8'))
 
