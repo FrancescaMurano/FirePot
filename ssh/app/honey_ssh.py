@@ -120,7 +120,7 @@ while True:
             if command == b"\r":
                 channel.send("\r\n".encode('utf-8'))  
 
-                multiple_cmds = re.split(r"[;&&]", output)
+                multiple_cmds = re.split(r"&&", output)
                 results = []
 
                 for cmd in (multiple_cmds):
