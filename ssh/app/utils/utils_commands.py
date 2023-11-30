@@ -82,8 +82,5 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
         else:
             output = ERROR
-        
-        if error != None:
-            output = ERROR
 
     return (output,error)
