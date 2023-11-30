@@ -22,10 +22,10 @@ BACK_KEY = "\x7f".encode()
  
 
 async def handle_client(reader, writer):
-    ip = writer.get_extra_info('peername')
+    ip = writer.get_extra_info('peername')[0]
     request = Request(ip)
-    
-    print(f"Connected to {writer.get_extra_info('peername')}")
+
+    print(f"Connected to {writer.get_extra_info('peername')[0]}")
     output = ""
     START = p.get_cli_display_path().encode('utf-8')
     writer.write(START) 
@@ -79,6 +79,8 @@ async def handle_client(reader, writer):
             writer.write(p.get_cli_display_path().encode('utf-8'))
             print(f"Error: {str(e)}")
             output = ""
+        finally:
+            writer.close()
     
     elastic.insert_ip_data(request.get_ip_info())
     print("Closing connection")
