@@ -5,10 +5,10 @@ from utils.utils_path import Path
 
 WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
-    "dir": ["dir","dir -R"],
+    "dir": ["dir"],
     "ls": ["ls"],
-    "cat": ["cat psw.txt", "cat credit_cards.txt", "cat p_key.pkcs1", "cat user.txt"],
-    "type": ["type psw.txt", "type credit_cards.txt", "type p_key.pkcs1", "type user.txt"],
+    "cat": ["cat psw.txt", "cat credit_cards.json", "cat p_key.pkcs1", "cat user.txt"],
+    "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
     "echo": ["echo"],
     "clear": ["clear"],
     "pwd": ["clear"],
@@ -61,6 +61,7 @@ def exec_command(cmd: str):
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
+            print(error,result)
 
     else:
         if cmd.startswith("cd"):
@@ -85,4 +86,3 @@ def exec_command(cmd: str):
             output = "Error: the sintax of the command is incorrect"
    
     return (output,error)
-
