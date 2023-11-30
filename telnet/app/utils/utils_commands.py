@@ -33,54 +33,57 @@ def check_command(cmd: str):
 def exec_command(cmd: str):
     path = Path()
     output = ""
-    error = ""
-    if check_command(cmd):
-
-        if cmd.startswith("cd"):
-            destination =  cmd.split(" ")[1] if len(cmd.split(" ")) > 1  else ''
-            path.set_current_path(os.path.join(path.get_start_full_path(),destination))
-            result = subprocess.run(cmd, shell=True,cwd=path.get_start_full_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
-
-        elif cmd.startswith("ls"):
-
-            # to force the space elimination
-            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
-        
-        elif cmd.startswith("pwd"):
-            output = "home"
-            
-        else:
-            result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
-
+    error = ERROR
+    if cmd == '' or cmd == None:
+        return error
     else:
-        if cmd.startswith("cd"):
-            path.reset_path()
-            result = subprocess.run("cd .", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
+        if check_command(cmd):
 
-        elif cmd.startswith("ls"):
-            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
+            if cmd.startswith("cd"):
+                destination =  cmd.split(" ")[1] if len(cmd.split(" ")) > 1  else ''
+                path.set_current_path(os.path.join(path.get_start_full_path(),destination))
+                result = subprocess.run(cmd, shell=True,cwd=path.get_start_full_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result.check_returncode()
+                output = result.stdout.decode("utf-8")
+                error = result.stderr.decode("utf-8")
 
-        elif cmd.startswith("dir"):
-            result = subprocess.run("dir", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
+            elif cmd.startswith("ls"):
+
+                # to force the space elimination
+                result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result.check_returncode()
+                output = result.stdout.decode("utf-8")
+                error = result.stderr.decode("utf-8")
+            
+            elif cmd.startswith("pwd"):
+                output = "home"
+                
+            else:
+                result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result.check_returncode()
+                output = result.stdout.decode("utf-8")
+                error = result.stderr.decode("utf-8")
+
         else:
-            output = ERROR
+            if cmd.startswith("cd"):
+                path.reset_path()
+                result = subprocess.run("cd .", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result.check_returncode()
+                output = result.stdout.decode("utf-8")
+                error = result.stderr.decode("utf-8")
+
+            elif cmd.startswith("ls"):
+                result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result.check_returncode()
+                output = result.stdout.decode("utf-8")
+                error = result.stderr.decode("utf-8")
+
+            elif cmd.startswith("dir"):
+                result = subprocess.run("dir", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result.check_returncode()
+                output = result.stdout.decode("utf-8")
+                error = result.stderr.decode("utf-8")
+            else:
+                output = ERROR
 
     return (output,error)

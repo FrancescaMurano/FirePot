@@ -1,14 +1,18 @@
 import asyncio
 import re
 from subprocess import *
+from elastic.elasticserver import ElasticServer
 from utils.utils_path import *
 from utils.utils_commands import exec_command
+from log_requests import Request
 
 PORT = 2323
 BANNER = "Telnet"
 p = Path()
+elastic = ElasticServer()
+request = Request()
 
-# commands
+# skip commands
 UP_KEY = "\x1b[A".encode()
 DOWN_KEY = "\x1b[B".encode()
 RIGHT_KEY = "\x1b[C".encode()
@@ -37,15 +41,13 @@ async def handle_client(reader, writer):
                 multiple_cmds = re.split(r"&&", output)
                 results = []
                 print("multiple",multiple_cmds)
-                multiple_cmds = [item for item in multiple_cmds if item != '']
                 for cmd in multiple_cmds:
                     cmd = cmd.strip()
                     result,error = exec_command(cmd)
-                    #server.insert_ip_request(request.get_request_json(cmd))
+                    elastic.insert_ip_request(request.get_request_json(cmd))
                     results.append(result)
                 
                 for res in results:
-                    print("ok")
                     res = res.encode("utf-8")
                     res = res.replace(b"  ",b"")
                     res = res.replace(b"\n",b"\r\n")
@@ -74,7 +76,8 @@ async def handle_client(reader, writer):
             writer.write(p.get_cli_display_path().encode('utf-8'))
             print(f"Error: {str(e)}")
             output = ""
-            
+    
+    elastic.insert_ip_data(request.get_ip_info())
     print("Closing connection")
     writer.close()
  

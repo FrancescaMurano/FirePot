@@ -23,13 +23,13 @@ class ElasticServer:
 
     def insert_ip_data(self,json_ip_data):
         self.es.index(
-            index='info_ip',
+            index='info_ip_telnet',
             document=json_ip_data
         )
 
     def insert_ip_request(self,json_ip_requests):
         self.es.index(
-            index='commands',
+            index='telnet_commands',
             document=json_ip_requests
     )
     
