@@ -34,7 +34,7 @@ def exec_command(cmd: str):
     path = Path()
     output = ""
     error = ""
-    if check_command(cmd):
+    if check_command(cmd.strip()):
 
         if cmd.startswith("cd"):
             destination =  cmd.split(" ")[1] if len(cmd.split(" ")) > 1  else ''
