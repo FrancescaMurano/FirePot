@@ -10,7 +10,7 @@ from elastic.elasticserver import ElasticServer
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
-PORT = 22
+PORT = 2222
 p = Path()
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
@@ -130,14 +130,10 @@ while True:
                     results.append(result)
                 
                 for res in results:
-                    res = res.encode("utf-8")
-                    print("res",res)
-                    res = res.replace(b" ",b"")
-                    res = res.replace(b"\n",b"\r\n")
-                    print("res2",res)
-                    channel.send(res)
+                    channel.send(res.encode("utf-8"))
 
-                channel.send(p.get_cli_display_path().encode('utf-8'))
+                channel.send(p.get                    prova:str = ""
+_cli_display_path().encode('utf-8'))
 
                 output = ""
 

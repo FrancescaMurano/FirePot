@@ -11,7 +11,7 @@ WHITELIST_COMMANDS = {
     "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
     "echo": ["echo"],
     "clear": ["clear"],
-    "pwd": ["clear"],
+    "pwd": ["pwd"],
     "whoami": ["whoami"],
 }
 
@@ -47,7 +47,7 @@ def exec_command(cmd: str):
         elif cmd.startswith("ls"):
 
             # to force the space elimination
-            result = subprocess.run("ls -C", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
@@ -71,7 +71,7 @@ def exec_command(cmd: str):
             error = result.stderr.decode("utf-8")
 
         elif cmd.startswith("ls"):
-            result = subprocess.run("ls -C", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
@@ -82,6 +82,6 @@ def exec_command(cmd: str):
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
         else:
-            output = "Error: the sintax of the command is incorrect"
+            output = "Error:\tthe\tsintax\to\tth\tcommand\tis\tincorrect"
    
     return (output,error)
