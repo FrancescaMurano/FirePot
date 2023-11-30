@@ -9,10 +9,8 @@ from log_requests import Request
 PORT = 2323
 BANNER = "Telnet"
 p = Path()
-elastic = ElasticServer()
 
-
-# skip commands
+# commands
 UP_KEY = "\x1b[A".encode()
 DOWN_KEY = "\x1b[B".encode()
 RIGHT_KEY = "\x1b[C".encode()
@@ -22,13 +20,16 @@ BACK_KEY = "\x7f".encode()
  
 
 async def handle_client(reader, writer):
+    
     ip = writer.get_extra_info('peername')[0]
-    request = Request(ip)
+    elastic = ElasticServer()
+    request = Request(ip)   
 
-    print(f"Connected to {writer.get_extra_info('peername')[0]}")
     output = ""
+
     START = p.get_cli_display_path().encode('utf-8')
-    writer.write(START) 
+    writer.write(START)
+     
     while True:
         try:
             command : bytes = await reader.read(100000)
@@ -44,6 +45,7 @@ async def handle_client(reader, writer):
                 multiple_cmds = re.split(r"&&", output)
                 results = []
                 print("multiple",multiple_cmds)
+                multiple_cmds = [item for item in multiple_cmds if item != '']
                 for cmd in multiple_cmds:
                     cmd = cmd.strip()
                     result,error = exec_command(cmd)
@@ -51,6 +53,7 @@ async def handle_client(reader, writer):
                     results.append(result)
                 
                 for res in results:
+                    print("ok")
                     res = res.encode("utf-8")
                     res = res.replace(b"  ",b"")
                     res = res.replace(b"\n",b"\r\n")
@@ -79,10 +82,9 @@ async def handle_client(reader, writer):
             writer.write(p.get_cli_display_path().encode('utf-8'))
             print(f"Error: {str(e)}")
             output = ""
-        finally:
-            writer.close()
-    
+        
     elastic.insert_ip_data(request.get_ip_info())
+
     print("Closing connection")
     writer.close()
  
