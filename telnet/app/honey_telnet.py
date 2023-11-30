@@ -10,7 +10,7 @@ PORT = 2323
 BANNER = "Telnet"
 p = Path()
 elastic = ElasticServer()
-request = Request()
+
 
 # skip commands
 UP_KEY = "\x1b[A".encode()
@@ -22,6 +22,9 @@ BACK_KEY = "\x7f".encode()
  
 
 async def handle_client(reader, writer):
+    ip = writer.get_extra_info('peername')
+    request = Request(ip)
+    
     print(f"Connected to {writer.get_extra_info('peername')}")
     output = ""
     START = p.get_cli_display_path().encode('utf-8')
