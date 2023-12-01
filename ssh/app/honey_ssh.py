@@ -5,12 +5,12 @@ import socket
 import os
 from subprocess import *
 from utils.utils_commands import *
-from log_requests import Requests
+from log_requests import Request
 from elastic.elasticserver import ElasticServer
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
-PORT = 22
+PORT = 2222
 p = Path()
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
@@ -100,7 +100,7 @@ while True:
 
     output = ""
     server = ElasticServer()
-    request = Requests(ip=addr[0])
+    request = Request(ip=addr[0])
 
     while True:
 
