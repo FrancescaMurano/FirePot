@@ -1,39 +1,9 @@
 import re
 import datetime
 
-class ModbusConnectionRequest:
-    def __init__(self, request: str) -> None:
-
-        self.ip   = ""
-        self.port = ""
-        self.date = ""
-        self.time = ""
-
-        reg_ip = '(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
-        reg_port = 'port=(?P<port>\d{1,5})'
-
-        ip_search = re.search(reg_ip,request)
-        port_search = re.search(reg_port,request)
-
-        if ip_search != None and port_search!=None:
-            self.ip = ip_search.group("ip")
-            self.port = port_search.group("port")
-            self.date = datetime.datetime.now().isoformat()
-
-    def get_ip(self):
-        return self.ip
-    
-    def get_json(self):
-
-        return {
-            'date':self.date,
-            'ip':  self.ip,
-            'port':self.port,
-        }
-    
 class ModbusRequest:
     def __init__(self, request: str) -> None:
-
+        print(request)
         self.date = datetime.datetime.now().isoformat()
 
         reg1 = '(?P<type>Data\sReceived):\s(?P<request>.+)'

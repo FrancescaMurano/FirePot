@@ -4,7 +4,7 @@ from pymodbus.datastore import ModbusSequentialDataBlock, ModbusSlaveContext, Mo
 from pymodbus.device import ModbusDeviceIdentification
 import logging,logging.handlers
 from elastic.elasticserver import ElasticServer
-from modbus.modbus_request import ModbusConnectionRequest,ModbusRequest
+from modbus.modbus_request import ModbusRequest
 from utils.utils_ip_info import get_ip_info
 from twisted.internet import protocol
 
@@ -51,4 +51,4 @@ class ServerSlave:
         self.context = ModbusServerContext(slaves=store, single=True)
 
     def run_server(self):
-        StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT),on_connect=self.on_connect)
+        StartTcpServer(context = self.context,identity=self.identity, address=(ADDR, PORT))
