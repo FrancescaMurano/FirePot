@@ -25,12 +25,14 @@ def exec_command(cmd: str):
     path = Path()
     output = ""
     error = ERROR_GEN
+    
     if cmd == '' or cmd == None:
         return error
     else:
         if check_command(cmd):
             cmd = cmd.strip()
-            error = "" 
+            error = ""
+            output = "" 
 
             if cmd.startswith("cd"):
                 destination =  cmd.split(" ")[1] if len(cmd.split(" ")) > 1  else ''
@@ -41,7 +43,7 @@ def exec_command(cmd: str):
 
                 if error == "":
                     path.set_current_path(os.path.join(path.get_current_path(),destination))
-
+                
             elif cmd.startswith("ls"):
 
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)

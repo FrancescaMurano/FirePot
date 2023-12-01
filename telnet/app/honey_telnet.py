@@ -40,8 +40,11 @@ async def handle_client(reader, writer):
             # escape commands
             if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
                 continue
-
+            
             if output.endswith("\r\n"):
+                if output.startswith("exit"):
+                    break
+
                 multiple_cmds = output.split("&&")
                 results = []
                 multiple_cmds = [item for item in multiple_cmds if item != '']
@@ -53,9 +56,8 @@ async def handle_client(reader, writer):
                         elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                         results.append(error)
-                    except CalledProcessError as e:
+                    except (CalledProcessError,ValueError) as e:
                         # writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
-                        writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
                         print(f"Error: {str(e)}")
                         output = ""
 
