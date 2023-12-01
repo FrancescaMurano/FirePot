@@ -12,8 +12,8 @@ class Request:
 
     def get_request_json(self,request: str):
 
-        self.ip_info['command'] = request
-        self.ip_info["date"] =  datetime.datetime.now().isoformat()
+        self.info['command'] = request
+        self.info["date"] =  datetime.datetime.now().isoformat()
 
         return self.ip_info
     
