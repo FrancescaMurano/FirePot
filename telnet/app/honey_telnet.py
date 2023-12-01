@@ -64,6 +64,7 @@ async def handle_client(reader, writer):
                 for res in results:
                     res = res.encode("utf-8")
                     res = res.replace(b"  ", b"")
+                    print("res",res)
                     writer.write(res)
 
                 writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))

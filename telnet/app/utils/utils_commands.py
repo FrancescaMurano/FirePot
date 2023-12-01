@@ -1,7 +1,7 @@
 import subprocess
 import os
 import re
-from .commands import WHITELIST_COMMANDS
+from .commands import WHITELIST_COMMANDS, IFCONFIG_RESPONSE
 from utils.utils_path import Path
 
 ERROR_GEN = "Error: The sintax of the command is incorrect."
@@ -43,7 +43,8 @@ def exec_command(cmd: str):
 
                 if error == "":
                     path.set_current_path(os.path.join(path.get_current_path(),destination))
-                
+            elif cmd.startswith("ifconfig"):
+                output = IFCONFIG_RESPONSE
             elif cmd.startswith("ls"):
 
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
