@@ -55,7 +55,8 @@ async def handle_client(reader, writer):
                         result, error = exec_command(cmd)
                         elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
-                        results.append(error)
+                        if result == "":
+                            results.append(error)
                     except (CalledProcessError,ValueError) as e:
                         # writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
                         print(f"Error: {str(e)}")

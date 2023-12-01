@@ -42,6 +42,7 @@ def exec_command(cmd: str):
                 error = result.stderr.decode("utf-8")
 
                 if error == "":
+                    destination = re.search(r"[a-zA-Z]+",destination).group()
                     path.set_current_path(os.path.join(path.get_current_path(),destination))
             elif cmd.startswith("ifconfig"):
                 output = IFCONFIG_RESPONSE
