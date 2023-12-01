@@ -15,7 +15,7 @@ class Request:
         self.info['command'] = request
         self.info["date"] =  datetime.datetime.now().isoformat()
 
-        return self.ip_info
+        return self.info
     
     def get_ip_info(self):
         return self.ip
