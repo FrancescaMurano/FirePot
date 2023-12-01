@@ -1,21 +1,11 @@
 import subprocess
 import os
 import re
+from .commands import WHITELIST_COMMANDS
 from utils.utils_path import Path
-ERROR_GEN = "Error: The sintax of the command is incorrect"
-ERROR_PATH = "Error: The system cannot find the path specified."
 
-WHITELIST_COMMANDS = {
-    "cd": ["cd keys","cd payments","cd users"],
-    "ls": ["ls","ls ../keys"],
-    "dir": ["dir","dir ../keys"],
-    "cat": ["cat psw.txt", "cat credit_cards.json", "cat p_key.pkcs1", "cat user.txt"],
-    "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
-    "echo": ["echo"],
-    "clear": ["clear"],
-    "pwd": ["pwd"],
-    "whoami": ["whoami"],
-}
+ERROR_GEN = "Error: The sintax of the command is incorrect."
+ERROR_PATH = "Error: The system cannot find the path specified."
 
 def check_command(cmd: str):
     echo_pattern = r'^echo\s+[A-Za-z0-9\s]+$'
@@ -54,14 +44,15 @@ def exec_command(cmd: str):
 
             elif cmd.startswith("ls"):
 
-                result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+                result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                 # result.check_returncode()
                 output = result.stdout.decode("utf-8")
                 error = result.stderr.decode("utf-8")
             
             elif cmd.startswith("pwd"):
                 output = "home"
-                
+            elif cmd.startswith("id"):
+                output = "uid=0(root) gid=0(root) gruppi=0(root)"
             else:
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                 # result.check_returncode()
