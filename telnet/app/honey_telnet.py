@@ -7,6 +7,7 @@ from utils.utils_path import *
 from utils.utils_commands import exec_command
 from log_requests import Request
 
+
 PORT = 2323
 BANNER = "Telnet"
 p = Path()
@@ -25,7 +26,7 @@ async def handle_client(reader, writer):
 
     output = ""
 
-    START = p.get_cli_display_path().encode('utf-8')
+    START = p.get_cli_display_path().encode('utf-8',errors='ignore')
     writer.write(START)
 
     try:
@@ -52,7 +53,7 @@ async def handle_client(reader, writer):
                         results.append(result)
                     except CalledProcessError as e:
                         writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
-                        writer.write(p.get_cli_display_path().encode('utf-8'))
+                        writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
                         print(f"Error: {str(e)}")
                         output = ""
 
@@ -62,7 +63,7 @@ async def handle_client(reader, writer):
                     res = res.replace(b"\n", b"\r\n")
                     writer.write(res)
 
-                writer.write(p.get_cli_display_path().encode('utf-8'))
+                writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
                 output = ""
 
             elif command == b"\x08":  # cancel only user input
@@ -72,11 +73,11 @@ async def handle_client(reader, writer):
                     writer.write(b' \x08')
 
             elif command == b'\x03':  # command to quit
-                writer.write("\r\n".encode('utf-8'))
+                writer.write("\r\n".encode('utf-8',errors='ignore'))
                 break  # exit the loop when client sends Ctrl+C
 
             else:  # concat input
-                output += command.decode('utf-8')
+                output += command.decode('utf-8',errors='ignore')
 
     except asyncio.CancelledError:
         pass  # Handle cancellation errors gracefully
@@ -86,7 +87,7 @@ async def handle_client(reader, writer):
 
     # except Exception as e:
     #     writer.write(f"Error: {str(e)}\r\n".encode("utf-8").strip())
-    #     writer.write(p.get_cli_display_path().encode('utf-8'))
+    #     writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
     #     print(f"Error: {str(e)}")
     #     output = ""
 
