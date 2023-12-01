@@ -32,6 +32,7 @@ async def handle_client(reader, writer):
     try:
         while True:
             command: bytes = await reader.read(100000)
+
             if not command:
                 print("no command")
                 break
@@ -40,16 +41,17 @@ async def handle_client(reader, writer):
             if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
                 continue
 
-            if command == b"\r\n":
+            if command.endswith(b"\r\n"):
+                output += command.decode('utf-8',errors='ignore')
                 multiple_cmds = re.split(r"&&", output)
                 results = []
-                print("multiple", multiple_cmds)
+
                 multiple_cmds = [item for item in multiple_cmds if item != '']
                 for cmd in multiple_cmds:
                     cmd = cmd.strip()
                     try:
                         result, error = exec_command(cmd)
-                        elastic.insert_ip_request(request.get_request_json(cmd))
+                       # elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     except CalledProcessError as e:
                         writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
@@ -76,8 +78,8 @@ async def handle_client(reader, writer):
                 writer.write("\r\n".encode('utf-8',errors='ignore'))
                 break  # exit the loop when client sends Ctrl+C
 
-            else:  # concat input
-                output += command.decode('utf-8',errors='ignore')
+            # else:  # concat input
+                
 
     except asyncio.CancelledError:
         pass  # Handle cancellation errors gracefully
@@ -92,7 +94,7 @@ async def handle_client(reader, writer):
     #     output = ""
 
     finally:
-        elastic.insert_ip_data(request.get_ip_info())
+        #elastic.insert_ip_data(request.get_ip_info())
         print("Closing connection")
         writer.close()
 
