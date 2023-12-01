@@ -8,7 +8,6 @@ WHITELIST_COMMANDS = {
     "cd": ["cd keys","cd payments","cd users"],
     "ls": ["ls"],
     "cat": ["cat psw.txt", "cat credit_cards.json", "cat p_key.pkcs1", "cat user.txt"],
-    "type": ["type psw.txt", "type credit_cards.json", "type p_key.pkcs1", "type user.txt"],
     "echo": ["echo"],
     "clear": ["clear"],
     "pwd": ["pwd"],
@@ -46,7 +45,6 @@ def exec_command(cmd: str):
 
         elif cmd.startswith("ls"):
 
-            # to force the space elimination
             result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
             result.check_returncode()
             output = result.stdout.decode("utf-8")
@@ -75,11 +73,6 @@ def exec_command(cmd: str):
             output = result.stdout.decode("utf-8")
             error = result.stderr.decode("utf-8")
 
-        elif cmd.startswith("dir"):
-            result = subprocess.run("dir", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            result.check_returncode()
-            output = result.stdout.decode("utf-8")
-            error = result.stderr.decode("utf-8")
         else:
             output = ERROR
 
