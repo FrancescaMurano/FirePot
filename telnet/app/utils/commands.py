@@ -15,7 +15,6 @@ WHITELIST_COMMANDS = {
             "cat user.txt"],
     "ifconfig":["ifconfig","ifconfig -a"],
     "id":["id","id -a"],
-    "ip":["ip","ip -a"],
     "echo": ["echo"],
     "clear": ["clear"],
     "pwd": ["pwd"],
