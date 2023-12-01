@@ -46,23 +46,21 @@ async def handle_client(reader, writer):
             if output.endswith("\r\n"):
                 multiple_cmds = output.split("&&")
                 results = []
-                print("output ",output)
-                # multiple_cmds = [item for item in multiple_cmds if item != '']
+                multiple_cmds = [item for item in multiple_cmds if item != '']
 
-                print("m ",multiple_cmds)
                 for cmd in multiple_cmds:
                     cmd = cmd.strip()
                     try:
                         result, error = exec_command(cmd)
-                        print("result",result)
                        # elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
+                        results.append(error)
                     except CalledProcessError as e:
-                        writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
+                        # writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
                         writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
                         print(f"Error: {str(e)}")
                         output = ""
-                print("results ",result)
+
                 for res in results:
                     res = res.encode("utf-8")
                     res = res.replace(b"  ", b"")
@@ -72,12 +70,11 @@ async def handle_client(reader, writer):
                 writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
                 output = ""
 
-            elif command == b"\x08":  # cancel only user input
-                if output:
-                    output = output[:-1]
+            elif command == b'\x08':  # cancel only user input
+                if len(output) > 0:
+                    output = output[:-2]
                     writer.write(b' \x08')
                     writer.write(b' \x08')
-
             elif command == b'\x03' or command == b"\xff\xf4\xff\xfd\x06":  # command to quit
                 writer.write("\r\n".encode('utf-8',errors='ignore'))
                 break  # exit the loop when client sends Ctrl+C
