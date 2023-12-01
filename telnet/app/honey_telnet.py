@@ -32,6 +32,7 @@ async def handle_client(reader, writer):
     try:
         while True:
             command: bytes = await reader.read(100000)
+            print(f"command {command}")
             output += command.decode('utf-8',errors='ignore')
 
             if not command:
@@ -43,15 +44,17 @@ async def handle_client(reader, writer):
                 continue
 
             if output.endswith("\r\n"):
-                output += command.decode('utf-8',errors='ignore')
                 multiple_cmds = output.split("&&")
                 results = []
+                print("output ",output)
+                # multiple_cmds = [item for item in multiple_cmds if item != '']
 
-                multiple_cmds = [item for item in multiple_cmds if item != '']
+                print("m ",multiple_cmds)
                 for cmd in multiple_cmds:
                     cmd = cmd.strip()
                     try:
                         result, error = exec_command(cmd)
+                        print("result",result)
                        # elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     except CalledProcessError as e:
@@ -59,11 +62,11 @@ async def handle_client(reader, writer):
                         writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
                         print(f"Error: {str(e)}")
                         output = ""
-
+                print("results ",result)
                 for res in results:
-                    res = res.encode("utf-8").strip()
+                    res = res.encode("utf-8")
                     res = res.replace(b"  ", b"")
-                    res = res.replace(b"\n", b"\r\n")
+                    # res = res.replace(b"\n", b"\r\n")
                     writer.write(res)
 
                 writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
@@ -75,12 +78,10 @@ async def handle_client(reader, writer):
                     writer.write(b' \x08')
                     writer.write(b' \x08')
 
-            elif command == b'\x03':  # command to quit
+            elif command == b'\x03' or command == b"\xff\xf4\xff\xfd\x06":  # command to quit
                 writer.write("\r\n".encode('utf-8',errors='ignore'))
                 break  # exit the loop when client sends Ctrl+C
 
-            # else:  # concat input
-                
 
     except asyncio.CancelledError:
         pass  # Handle cancellation errors gracefully
