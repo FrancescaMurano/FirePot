@@ -50,7 +50,7 @@ async def handle_client(reader, writer):
                     cmd = cmd.strip()
                     try:
                         result, error = exec_command(cmd)
-                       # elastic.insert_ip_request(request.get_request_json(cmd))
+                        elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                         results.append(error)
                     except CalledProcessError as e:
@@ -90,7 +90,7 @@ async def handle_client(reader, writer):
     #     output = ""
 
     finally:
-        #elastic.insert_ip_data(request.get_ip_info())
+        elastic.insert_ip_data(request.get_ip_info())
         print("Closing connection")
         writer.close()
 
