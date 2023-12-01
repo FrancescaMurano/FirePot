@@ -77,12 +77,7 @@ def exec_command(cmd: str):
                 result.check_returncode()
                 output = result.stdout.decode("utf-8")
                 error = result.stderr.decode("utf-8")
-
-            elif cmd.startswith("dir"):
-                result = subprocess.run("dir", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                result.check_returncode()
-                output = result.stdout.decode("utf-8")
-                error = result.stderr.decode("utf-8")
+                
             else:
                 output = ERROR
 
