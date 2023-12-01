@@ -51,14 +51,13 @@ async def handle_client(reader, writer):
                         elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     except CalledProcessError as e:
-                        writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
+                        writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
                         writer.write(p.get_cli_display_path().encode('utf-8'))
                         print(f"Error: {str(e)}")
                         output = ""
 
                 for res in results:
-                    print("ok")
-                    res = res.encode("utf-8")
+                    res = res.encode("utf-8").strip()
                     res = res.replace(b"  ", b"")
                     res = res.replace(b"\n", b"\r\n")
                     writer.write(res)
@@ -69,7 +68,6 @@ async def handle_client(reader, writer):
             elif command == b"\x08":  # cancel only user input
                 if output:
                     output = output[:-1]
-                    print("out", output)
                     writer.write(b' \x08')
                     writer.write(b' \x08')
 
@@ -87,7 +85,7 @@ async def handle_client(reader, writer):
         pass  # Handle specific socket errors
 
     # except Exception as e:
-    #     writer.write(f"Error: {str(e)}\r\n".encode("utf-8"))
+    #     writer.write(f"Error: {str(e)}\r\n".encode("utf-8").strip())
     #     writer.write(p.get_cli_display_path().encode('utf-8'))
     #     print(f"Error: {str(e)}")
     #     output = ""

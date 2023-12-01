@@ -7,7 +7,8 @@ class Request:
     def __init__(self, ip:str) -> None:
         self.ip = ""
         self.requests = []
-        self.ip_info = get_ip_info(ip)
+        self.info = get_ip_info(ip)
+        self.ip = get_ip_info(ip)
 
     def get_request_json(self,request: str):
 
@@ -17,7 +18,7 @@ class Request:
         return self.ip_info
     
     def get_ip_info(self):
-        return self.ip_info
+        return self.ip
         
 
     
