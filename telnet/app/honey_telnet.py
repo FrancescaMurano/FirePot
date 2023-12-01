@@ -32,6 +32,7 @@ async def handle_client(reader, writer):
     try:
         while True:
             command: bytes = await reader.read(100000)
+            output += command.decode('utf-8',errors='ignore')
 
             if not command:
                 print("no command")
@@ -41,9 +42,9 @@ async def handle_client(reader, writer):
             if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
                 continue
 
-            if command.endswith(b"\r\n"):
+            if output.endswith("\r\n"):
                 output += command.decode('utf-8',errors='ignore')
-                multiple_cmds = re.split(r"&&", output)
+                multiple_cmds = output.split("&&")
                 results = []
 
                 multiple_cmds = [item for item in multiple_cmds if item != '']
