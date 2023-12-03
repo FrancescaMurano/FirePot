@@ -1,7 +1,7 @@
 import subprocess
 import os
 import re
-from .commands import WHITELIST_COMMANDS, IFCONFIG_RESPONSE
+from .commands import WHITELIST_COMMANDS, IFCONFIG_FULL_RESPONSE,IP_A_RESPONSE,IFCONFIG_SIMPLE_RESPONSE
 from utils.utils_path import Path
 
 ERROR_GEN = "Error: The sintax of the command is incorrect."
@@ -44,10 +44,17 @@ def exec_command(cmd: str):
                 if error == "":
                     destination = re.search(r"[a-zA-Z]+",destination).group()
                     path.set_current_path(os.path.join(path.get_current_path(),destination))
-            elif cmd.startswith("ifconfig"):
-                output = IFCONFIG_RESPONSE
-            elif cmd.startswith("ls"):
 
+            elif cmd == "ifconfig":
+                output = IFCONFIG_SIMPLE_RESPONSE
+
+            elif cmd == "ifconfig -a":
+                output = IFCONFIG_FULL_RESPONSE
+            
+            elif cmd == "ip a":
+                output = IP_A_RESPONSE
+                
+            elif cmd.startswith("ls"):
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                 # result.check_returncode()
                 output = result.stdout.decode("utf-8")
@@ -55,8 +62,10 @@ def exec_command(cmd: str):
             
             elif cmd.startswith("pwd"):
                 output = "home"
+
             elif cmd.startswith("id"):
                 output = "uid=0(root) gid=0(root) gruppi=0(root)"
+            
             else:
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
                 # result.check_returncode()
@@ -73,11 +82,11 @@ def exec_command(cmd: str):
             elif cmd.startswith("cd") and cmd.find("..")==-1:
                 output = ERROR_PATH
 
-            elif cmd.startswith("ls"):
-                result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                # result.check_returncode()
-                output = result.stdout.decode("utf-8")
-                error = result.stderr.decode("utf-8")
+            # elif cmd.startswith("ls"):
+            #     result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
+            #     # result.check_returncode()
+            #     output = result.stdout.decode("utf-8")
+            #     error = result.stderr.decode("utf-8")
 
             elif error == "":
                 output = ERROR_GEN
