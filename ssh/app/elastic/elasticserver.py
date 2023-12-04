@@ -22,13 +22,13 @@ class ElasticServer:
                     basic_auth=(username,password))
 
     async def insert_ip_data(self,json_ip_data):
-        self.es.index(
+        await self.es.index(
             index='info_ip_ssh',
             document=json_ip_data
         )
 
     async def insert_ip_request(self,json_ip_requests):
-        self.es.index(
+        await self.es.index(
             index='commands_ssh',
             document=json_ip_requests
     )
