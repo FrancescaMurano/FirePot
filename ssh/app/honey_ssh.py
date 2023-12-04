@@ -130,6 +130,7 @@ async def main():
                     for cmd in (multiple_cmds):
                         cmd = cmd.lstrip()
                         result,error = exec_command(cmd)
+                        print("error",error)
                         await server.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     
