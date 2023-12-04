@@ -168,9 +168,10 @@ async def main():
                 
         
         await server.insert_ip_data(request.get_ip_info())
+        
         channel.close()
         transport.close()
 
 
-if "__main__":
+if __name__ == "__main__":
     run(asyncio.run(main()))
