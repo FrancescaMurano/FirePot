@@ -24,7 +24,7 @@ BACK_KEY = "\x7f".encode()
 class SSHServer(paramiko.ServerInterface):
     def __init__(self):
         self.event = threading.Event()
-        self.banner_timeout = 200 
+        self.banner_timeout = 60
 
     def check_channel_request(self, kind, chanid):
         if kind == "session":

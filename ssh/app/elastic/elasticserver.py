@@ -1,5 +1,5 @@
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Q,Search
+from elasticsearch import AsyncElasticsearch
+# from elasticsearch_dsl import Q,Search
 
 IP = "34.17.54.125"
 class ElasticServer:
@@ -17,28 +17,32 @@ class ElasticServer:
             username = "elastic"
             password = "+RIk0Zh-KI=oJL*bkopF"
 
-            self.es = Elasticsearch(f"http://{IP}:9200",
+            self.es = AsyncElasticsearch(f"http://{IP}:9200",
                     # ca_certs="config/certs/http_ca.crt",
                     basic_auth=(username,password))
 
-    def insert_ip_data(self,json_ip_data):
+    async def insert_ip_data(self,json_ip_data):
         self.es.index(
             index='info_ip_ssh',
             document=json_ip_data
         )
 
-    def insert_ip_request(self,json_ip_requests):
+    async def insert_ip_request(self,json_ip_requests):
         self.es.index(
             index='commands_ssh',
             document=json_ip_requests
     )
     
 
-    # def erase(self):
-    #     query = Q('match',ipAddress='127.0.0.1')
-    #     s = Search(using=self.es).query(query)
-    #     responses = s.execute()
+#     def erase(self):
+#         query = Q('match',ipAddress='127.0.0.1')
+#         s = Search(using=self.es).query(query)
+#         responses = s.execute()
+#         print(responses)
+#         for hit in responses:
+#             print(hit)
+#             #self.es.delete(index="commands_ssh",id=hit.meta.id)
 
-    #     for hit in responses:
-    #         self.es.delete(index="info_ip",id=hit.meta.id)
 
+# e = ElasticServer()
+# e.erase()
