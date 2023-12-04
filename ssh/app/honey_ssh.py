@@ -7,6 +7,7 @@ from subprocess import *
 from utils.utils_commands import *
 from log_requests import Request
 from elastic.elasticserver import ElasticServer
+import asyncio
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
@@ -48,120 +49,127 @@ class SSHServer(paramiko.ServerInterface):
         return ("SSH-2.0-OpenSSH_5.3\n",'en-US')
 
 # Create a socket for the SSH server
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind(('0.0.0.0', PORT))
-START = p.get_cli_display_path().encode('utf-8')
 
 
-server_socket.listen(5)
+async def main():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('0.0.0.0', PORT))
+    START = p.get_cli_display_path().encode('utf-8')
 
-print("Waiting for SSH connections...")
 
-# Generate the host key file (if it doesn't exist)
-host_key_file = "static_host_key"
-host_key = paramiko.RSAKey.generate(2048)
+    server_socket.listen(5)
 
-if not os.path.exists(host_key_file):
-    print("not exists")
-    host_key.write_private_key_file(host_key_file)
+    print("Waiting for SSH connections...")
 
-while True:
-    client_socket, addr = server_socket.accept()
+    # Generate the host key file (if it doesn't exist)
+    host_key_file = "static_host_key"
+    host_key = paramiko.RSAKey.generate(2048)
 
-    transport = paramiko.Transport(client_socket)
-    transport.local_version = BANNER
-
-    # Load the static host key
-    transport.load_server_moduli()
-    transport.add_server_key(host_key)
-
-    server = SSHServer()
-
-    try:
-        transport.start_server(server=server)
-
-    except paramiko.SSHException as ssh:
-        print(ssh)
-    except ConnectionResetError as connectionerror:
-        print(connectionerror)
-    except EOFError as oeferror:
-        print(oeferror)
-
-    print(f"Connection from {addr[0]}:{addr[1]}")
- 
-    channel = transport.accept(20)
-
-    if channel is None:
-        print("No session created.")
-        transport.close()
-        continue
-    else:
-        channel.send(START)
-
-    output = ""
-    server = ElasticServer()
-    request = Request(ip=addr[0])
+    if not os.path.exists(host_key_file):
+        print("not exists")
+        host_key.write_private_key_file(host_key_file)
 
     while True:
+        client_socket, addr = server_socket.accept()
 
-        START = p.get_cli_display_path().encode('utf-8')
-        
+        transport = paramiko.Transport(client_socket)
+        transport.local_version = BANNER
+
+        # Load the static host key
+        transport.load_server_moduli()
+        transport.add_server_key(host_key)
+
+        server = SSHServer()
+
         try:
-            command = channel.recv(2048)
+            transport.start_server(server=server)
 
-            if not command:
-                print("no command")
-                break
+        except paramiko.SSHException as ssh:
+            print(ssh)
+        except ConnectionResetError as connectionerror:
+            print(connectionerror)
+        except EOFError as oeferror:
+            print(oeferror)
 
-            # excape commands
-            if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
-                continue
-
-            if command == b"\r":
-                channel.send("\r\n".encode('utf-8'))  
-
-                multiple_cmds = re.split(r"&&", output)
-                results = []
-
-                for cmd in (multiple_cmds):
-                    cmd = cmd.lstrip()
-                    result,error = exec_command(cmd)
-                    server.insert_ip_request(request.get_request_json(cmd))
-                    results.append(result)
-                
-                for res in results:
-                    res = res.encode("utf-8")
-                    res = res.replace(b"  ",b"")
-                    res = res.replace(b"\n",b"\r\n")
-
-                    channel.send(res)
-
-                channel.send(p.get_cli_display_path().encode('utf-8'))
-
-                output = ""
-
-            elif command == b"\x7f": # cancel only user input 
-                if output: 
-                    output = output[:-1]
-                    channel.send(b'\x08')
-                    channel.send(b' \x08')
-
-
-            elif command == b'\x03': # command to quit
-                    channel.send("\r\n".encode('utf-8'))
-                    transport.close()
-                     
-            else: # concat imput
-                output+= command.decode('utf-8')
-                channel.send(command)
-
-        except Exception as e:
-            print(f"Error: {str(e)}")
-            channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
-            channel.send(p.get_cli_display_path().encode('utf-8'))
-            output = ""
-            
+        print(f"Connection from {addr[0]}:{addr[1]}")
     
-    server.insert_ip_data(request.get_ip_info())
-    channel.close()
-    transport.close()
+        channel = transport.accept(20)
+
+        if channel is None:
+            print("No session created.")
+            transport.close()
+            continue
+        else:
+            channel.send(START)
+
+        output = ""
+        server = ElasticServer()
+        request = Request(ip=addr[0])
+
+        while True:
+
+            START = p.get_cli_display_path().encode('utf-8')
+            
+            try:
+                command = channel.recv(2048)
+
+                if not command:
+                    print("no command")
+                    break
+
+                # excape commands
+                if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
+                    continue
+
+                if command == b"\r":
+                    channel.send("\r\n".encode('utf-8'))  
+
+                    multiple_cmds = re.split(r"&&", output)
+                    results = []
+
+                    for cmd in (multiple_cmds):
+                        cmd = cmd.lstrip()
+                        result,error = exec_command(cmd)
+                        await server.insert_ip_request(request.get_request_json(cmd))
+                        results.append(result)
+                    
+                    for res in results:
+                        res = res.encode("utf-8")
+                        res = res.replace(b"  ",b"")
+                        res = res.replace(b"\n",b"\r\n")
+
+                        channel.send(res)
+
+                    channel.send(p.get_cli_display_path().encode('utf-8'))
+
+                    output = ""
+
+                elif command == b"\x7f": # cancel only user input 
+                    if output: 
+                        output = output[:-1]
+                        channel.send(b'\x08')
+                        channel.send(b' \x08')
+
+
+                elif command == b'\x03' or command == b"exit": # command to quit
+                        channel.send("\r\n".encode('utf-8'))
+                        transport.close()
+                        
+                else: # concat imput
+                    output+= command.decode('utf-8')
+                    channel.send(command)
+
+            except Exception as e:
+                print(f"Error: {str(e)}")
+                channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
+                channel.send(p.get_cli_display_path().encode('utf-8'))
+                output = ""
+                
+        
+        await server.insert_ip_data(request.get_ip_info())
+        channel.close()
+        transport.close()
+
+
+if "__main__":
+    run(asyncio.run(main()))
