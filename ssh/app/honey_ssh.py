@@ -131,7 +131,7 @@ async def main():
                         cmd = cmd.lstrip()
                         result,error = exec_command(cmd)
                         print("error",error)
-                        await server.insert_ip_request(request.get_request_json(cmd))
+                        #await server.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     
                     for res in results:
@@ -167,7 +167,7 @@ async def main():
                 output = ""
                 
         
-        await server.insert_ip_data(request.get_ip_info())
+        #await server.insert_ip_data(request.get_ip_info())
         
         channel.close()
         transport.close()
