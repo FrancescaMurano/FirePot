@@ -89,53 +89,55 @@ passwords = {'root': 'root'}
 PORT = 2222
 BANNER = "SSH-2.0-OpenSSH_5.3"
 # commands
-UP_KEY = "\x1b[A".encode()
-DOWN_KEY = "\x1b[B".encode()
-RIGHT_KEY = "\x1b[C".encode()
-LEFT_KEY = "\x1b[D".encode()
-BACK_KEY = "\x7f".encode()
+UP_KEY = "\x1b[A"
+DOWN_KEY = "\x1b[B" 
+RIGHT_KEY = "\x1b[C" 
+LEFT_KEY = "\x1b[D" 
+BACK_KEY = "\x7f" 
 
 class SSHServer(asyncssh.SSHServer):
     def __init__(self):
         super().__init__()
 
     def connection_made(self, connection):
-        self.peer_addr = connection.get_extra_info('peername')
-        print(f"Connection from {self.peer_addr[0]}:{self.peer_addr[1]}")
+        print(f"Connection from {connection.get_extra_info('peername')[0]}:{connection.get_extra_info('peername')[1]}")
 
     def connection_lost(self, exc):
         if exc:
             print(f"error {str(exc)}")
         else:
-            print("Conncetion closed")
+            print("Connection closed")
+
+    def begin_auth(self, username):
+        if username == "root":
+            return ["password"]
+        return []
 
     def password_auth_supported(self):
         return True
 
     def validate_password(self, username, password):
-        print(username,password)
+        print(username, password)
         if username == "root" and password == "root":
             return True
         return False
 
     def session_requested(self):
-        return SSHSession(self,addr=self.peer_addr)
-    
+        return SSHSession()
+
 class SSHSession(asyncssh.SSHServerSession):
-    def __init__(self,*args,**kwargs):
+    def __init__(self):
         super().__init__()
         self.output = ""
-        self.server = kwargs.get('addr')
-        self.elastic = ElasticServer()
-        self.request = Request(ip=self.server[0])
+        self.server = None  # Qui non c'è bisogno di passare il server come argomento
 
     def connection_made(self, chan):
         print("ok")
-        p = Path()
+        self.p = Path()
         self.channel = chan
-        self.request = Request(ip=self.server.peer_addr[0])
+        self.request = Request(ip=chan.get_extra_info('peername')[0])
         self.channel.write("Welcome to my async SSH server!\r\n")
-        self.channel.write(p.get_cli_display_path().encode('utf-8'))
+        self.channel.write(self.p.get_cli_display_path())
 
     def data_received(self, data, datatype):
 
@@ -149,7 +151,7 @@ class SSHSession(asyncssh.SSHServerSession):
             return
 
         if command == "\r":
-            self.channel.write("\r\n".encode('utf-8'))
+            self.channel.write("\r\n")
 
             multiple_cmds = re.split(r"&&", self.output)
             results = []
@@ -162,13 +164,12 @@ class SSHSession(asyncssh.SSHServerSession):
                 results.append(result)
 
             for res in results:
-                res = res.encode("utf-8")
                 res = res.replace(b"  ", b"")
                 res = res.replace(b"\n", b"\r\n")
 
                 self.channel.write(res)
 
-            self.channel.write(p.get_cli_display_path().encode('utf-8'))
+            self.channel.write(self.p.get_cli_display_path())
 
             self.output = ""
 
@@ -179,7 +180,7 @@ class SSHSession(asyncssh.SSHServerSession):
                 self.channel.write(b' \x08')
 
         elif command == b'\x03' or command == b"exit":  # command to quit
-            self.channel.write("\r\n".encode('utf-8'))
+            self.channel.write("\r\n")
             self.channel.close()
 
         else:  # concat input
