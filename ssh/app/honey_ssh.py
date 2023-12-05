@@ -105,14 +105,13 @@ async def main():
         output = ""
         server = ElasticServer()
         request = Request(ip=addr[0])
-        channel.settimeout(5)
 
         while True:
 
             START = p.get_cli_display_path().encode('utf-8')
             
             try:
-                command = channel.recv(2048)
+                command = channel.recv(1024)
 
                 if not command:
                     print("no command")
@@ -162,8 +161,8 @@ async def main():
                     channel.send(command)
 
             except socket.timeout:
-                print("Timeout")
                 channel.close()
+
             except Exception as e:
                 import traceback
                 traceback.print_exc()
