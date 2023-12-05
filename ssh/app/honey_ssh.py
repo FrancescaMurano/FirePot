@@ -161,8 +161,9 @@ async def main():
                     channel.send(command)
 
             except Exception as e:
-                print(f"Error: {str(e)}")
-                channel.send("Error: the sintax of the command is incorrect\r\n".encode("utf-8"))
+                import traceback
+                traceback.print_exc()
+                channel.send("An error occurred. Check the server logs for details.\r\n".encode("utf-8"))
                 channel.send(p.get_cli_display_path().encode('utf-8'))
                 output = ""
                 
