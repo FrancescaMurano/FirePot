@@ -12,7 +12,6 @@ import asyncio
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
 
 PORT = 2222
-p = Path()
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
 # commands
@@ -52,6 +51,7 @@ class SSHServer(paramiko.ServerInterface):
 
 
 async def main():
+    p = Path()
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('0.0.0.0', PORT))
     START = p.get_cli_display_path().encode('utf-8')
@@ -105,6 +105,7 @@ async def main():
         output = ""
         server = ElasticServer()
         request = Request(ip=addr[0])
+        channel.settimeout(5)
 
         while True:
 
@@ -160,6 +161,9 @@ async def main():
                     output+= command.decode('utf-8')
                     channel.send(command)
 
+            except socket.timeout:
+                print("Timeout")
+                channel.close()
             except Exception as e:
                 import traceback
                 traceback.print_exc()
