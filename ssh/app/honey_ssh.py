@@ -92,6 +92,7 @@ async def main():
             print(oeferror)
 
         print(f"Connection from {addr[0]}:{addr[1]}")
+        p.reset_path()
     
         channel = transport.accept(20)
 
@@ -131,7 +132,8 @@ async def main():
                     for cmd in (multiple_cmds):
                         cmd = cmd.lstrip()
                         result,error = exec_command(cmd)
-                        print("error",error)
+                        if error:
+                            print("error",error)
                         await server.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     
