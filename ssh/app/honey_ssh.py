@@ -21,6 +21,10 @@ RIGHT_KEY = "\x1b[C".encode()
 LEFT_KEY = "\x1b[D".encode()
 BACK_KEY = "\x7f".encode()
 
+MAX_CONCURRENT_CONNECTIONS = 10
+MAX_BANDWIDTH = 1024  # Limite di banda in kilobits per secondo
+IDLE_TIMEOUT = 300  # Timeout di 5 minuti per inattività
+
 class SSHServer(paramiko.ServerInterface):
     def __init__(self):
         self.event = threading.Event()
@@ -30,6 +34,15 @@ class SSHServer(paramiko.ServerInterface):
         if kind == "session":
             return paramiko.OPEN_SUCCEEDED
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
+
+    def check_channel_pty_request(self, channel, term, width, height, pixelwidth, pixelheight, modes):
+        # Allow PTY allocation
+        return True
+
+    def check_channel_shell_request(self, channel):
+        channel.settimeout(IDLE_TIMEOUT)
+        channel.set_combine_stderr(True)
+        return True
 
     def check_auth_password(self, username, password):
         if username == "root" and password == "root":
@@ -112,6 +125,7 @@ async def main():
             
             try:
                 command = channel.recv(1024)
+                print("command",command)
 
                 if not command:
                     print("no command")
