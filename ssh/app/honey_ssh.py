@@ -21,10 +21,6 @@ RIGHT_KEY = "\x1b[C".encode()
 LEFT_KEY = "\x1b[D".encode()
 BACK_KEY = "\x7f".encode()
 
-MAX_CONCURRENT_CONNECTIONS = 10
-MAX_BANDWIDTH = 1024  # Limite di banda in kilobits per secondo
-IDLE_TIMEOUT = 300  # Timeout di 5 minuti per inattività
-
 class SSHServer(paramiko.ServerInterface):
     def __init__(self):
         self.event = threading.Event()
@@ -34,15 +30,6 @@ class SSHServer(paramiko.ServerInterface):
         if kind == "session":
             return paramiko.OPEN_SUCCEEDED
         return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
-
-    def check_channel_pty_request(self, channel, term, width, height, pixelwidth, pixelheight, modes):
-        # Allow PTY allocation
-        return True
-
-    def check_channel_shell_request(self, channel):
-        channel.settimeout(IDLE_TIMEOUT)
-        channel.set_combine_stderr(True)
-        return True
 
     def check_auth_password(self, username, password):
         if username == "root" and password == "root":
@@ -118,14 +105,14 @@ async def main():
         output = ""
         server = ElasticServer()
         request = Request(ip=addr[0])
+        channel.settimeout(10)
 
         while True:
 
             START = p.get_cli_display_path().encode('utf-8')
             
             try:
-                command = channel.recv(1024)
-                print("command",command)
+                command = channel.recv(2048)
 
                 if not command:
                     print("no command")
@@ -145,7 +132,7 @@ async def main():
                         cmd = cmd.lstrip()
                         result,error = exec_command(cmd)
                         print("error",error)
-                        #await server.insert_ip_request(request.get_request_json(cmd))
+                        await server.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                     
                     for res in results:
@@ -175,17 +162,17 @@ async def main():
                     channel.send(command)
 
             except socket.timeout:
+                print("Timeout")
                 channel.close()
-
+                
             except Exception as e:
                 import traceback
                 traceback.print_exc()
                 channel.send("An error occurred. Check the server logs for details.\r\n".encode("utf-8"))
                 channel.send(p.get_cli_display_path().encode('utf-8'))
                 output = ""
-                
         
-        #await server.insert_ip_data(request.get_ip_info())
+        await server.insert_ip_data(request.get_ip_info())
         
         channel.close()
         transport.close()

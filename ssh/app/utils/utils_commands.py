@@ -81,4 +81,5 @@ def exec_command(cmd: str):
 
         elif error == "":
                 output = ERROR_GEN
+                
     return (output,error)
