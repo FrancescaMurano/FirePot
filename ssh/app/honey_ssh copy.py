@@ -1,176 +1,48 @@
-import asyncio
-import paramiko
-import re
-import socket
-import os
-from pathlib import Path
-from subprocess import *
-from utils.utils_commands import *
-from log_requests import Request
-from elastic.elasticserver import ElasticServer
 
-paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
-import tracemalloc
-tracemalloc.start()
-PORT = 2222
-BANNER = "SSH-2.0-OpenSSH_5.3"
+import asyncio, asyncssh, crypt, sys
+from typing import Optional
 
-# commands
-UP_KEY = "\x1b[A".encode()
-DOWN_KEY = "\x1b[B".encode()
-RIGHT_KEY = "\x1b[C".encode()
-LEFT_KEY = "\x1b[D".encode()
-BACK_KEY = "\x7f".encode()
+passwords = {'guest': '',                 # guest account with no password
+             'user123': 'qV2iEadIGV2rw'   # password of 'secretpw'
+            }
 
-class SSHServer(paramiko.ServerInterface):
-    def __init__(self):
-        self.event = asyncio.Event()
-        self.banner_timeout = 60
+def handle_client(process: asyncssh.SSHServerProcess) -> None:
+    process.stdout.write('Welcome to my SSH server, %s!\n' %
+                         process.get_extra_info('username'))
+    process.exit(0)
 
-    def check_channel_request(self, kind, chanid):
-        if kind == "session":
-            return paramiko.OPEN_SUCCEEDED
-        return paramiko.OPEN_FAILED_ADMINISTRATIVELY_PROHIBITED
+class MySSHServer(asyncssh.SSHServer):
+    def connection_made(self, conn: asyncssh.SSHServerConnection) -> None:
+        print('SSH connection received from %s.' %
+                  conn.get_extra_info('peername')[0])
 
-    def check_auth_password(self, username, password):
-        print(password)
-        if username == "root" and password == "root":
-            
-            return paramiko.AUTH_SUCCESSFUL
-        return paramiko.AUTH_FAILED
-
-    def check_channel_pty_request(self, channel, term, width, height, pixelwidth, pixelheight, modes):
-        # Allow PTY allocation
-        return True
-
-    def check_channel_shell_request(self, channel):
-        # Allow the shell request
-        return True
- 
-    def get_banner(self):
-        return ("SSH-2.0-OpenSSH_5.3\n", 'en-US')
-
-async def handle_client(channel, addr):
-    p = Path()
-    START = p.get_cli_display_path().encode('utf-8')
-
-    channel.send(START)
-
-    output = ""
-    server = ElasticServer()
-    request = Request(ip=addr[0])
-    # channel.settimeout(5)
-
-    while True:
-        START = p.get_cli_display_path().encode('utf-8')
-            
-        try:
-            command = channel.recv(2048)
-
-            if not command:
-                print("No command received, closing connection")
-                break
-
-            # Escape commands
-            if command == UP_KEY or command == DOWN_KEY or command == LEFT_KEY or command == RIGHT_KEY:
-                continue
-
-            if command == b"\r":
-                channel.send("\r\n".encode('utf-8'))  
-
-                multiple_cmds = re.split(r"&&", output)
-                results = []
-
-                for cmd in multiple_cmds:
-                    cmd = cmd.lstrip()
-                    result, error = exec_command(cmd)
-                    print("error", error)
-                    #await server.insert_ip_request(request.get_request_json(cmd))
-                    results.append(result)
-
-                for res in results:
-                    res = res.encode("utf-8")
-                    res = res.replace(b"  ", b"")
-                    res = res.replace(b"\n", b"\r\n")
-
-                    channel.send(res)
-
-                channel.send(p.get_cli_display_path().encode('utf-8'))
-                output = ""
-
-            elif command == b"\x7f":  # Cancel only user input 
-                if output: 
-                    output = output[:-1]
-                    channel.send(b'\x08')
-                    channel.send(b' \x08')
-
-            elif command == b'\x03' or command == b"exit":  # Command to quit
-                channel.send("\r\n".encode('utf-8'))
-                channel.close()
-                break
-
-            else:  # Concatenate input
-                output += command.decode('utf-8')
-                channel.send(command)
-
-        except socket.timeout:
-            print("Timeout, closing connection")
-            channel.close()
-            break
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            channel.send("An error occurred. Check the server logs for details.\r\n".encode("utf-8"))
-            channel.send(p.get_cli_display_path().encode('utf-8'))
-            output = ""
-
-async def main():
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.bind(('0.0.0.0', PORT))
-    server_socket.listen(5)
-
-    print("Waiting for SSH connections...")
-
-    # Generate the host key file (if it doesn't exist)
-    host_key_file = "static_host_key"
-    host_key = paramiko.RSAKey.generate(2048)
-
-    if not os.path.exists(host_key_file):
-        print("Host key does not exist, generating...")
-        host_key.write_private_key_file(host_key_file)
-
-    while True:
-        client_socket, addr = server_socket.accept()
-
-        transport = paramiko.Transport(client_socket)
-        transport.local_version = BANNER
-
-        # Load the static host key
-        transport.load_server_moduli()
-        transport.add_server_key(host_key)
-
-        server = SSHServer()
-
-        try:
-            transport.start_server(server=server)
-        except paramiko.SSHException as ssh:
-            print(ssh)
-        except ConnectionResetError as connectionerror:
-            print(connectionerror)
-        except EOFError as oeferror:
-            print(oeferror)
-
-        print(f"Connection from {addr[0]}:{addr[1]}")
-
-        channel = transport.accept(20)
-
-        if channel is None:
-            print("No session created.")
-            transport.close()
-            continue
+    def connection_lost(self, exc: Optional[Exception]) -> None:
+        if exc:
+            print('SSH connection error: ' + str(exc), file=sys.stderr)
         else:
-            # Avvia una coroutine per gestire il client
-            await handle_client(channel, addr)
+            print('SSH connection closed.')
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    def begin_auth(self, username: str) -> bool:
+        # If the user's password is the empty string, no auth is required
+        return passwords.get(username) != ''
+
+    def password_auth_supported(self) -> bool:
+        return True
+
+    def validate_password(self, username: str, password: str) -> bool:
+        pw = passwords.get(username, '*')
+        return crypt.crypt(password, pw) == pw
+
+async def start_server() -> None:
+    await asyncssh.create_server(MySSHServer, '', 8022,
+                                 server_host_keys=['ssh_host_key'],
+                                 process_factory=handle_client)
+
+loop = asyncio.get_event_loop()
+
+try:
+    loop.run_until_complete(start_server())
+except (OSError, asyncssh.Error) as exc:
+    sys.exit('Error starting server: ' + str(exc))
+
+loop.run_forever()
