@@ -1,54 +1,71 @@
-# Copyright (c) Twisted Matrix Laboratories.
-# See LICENSE for details.
-
-"""
-An example FTP server with minimal user authentication.
-"""
-import os
-from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
+from twisted.protocols.ftp import FTP, FTPFactory, FTPRealm
 from twisted.cred.portal import Portal
+from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
 from twisted.internet import reactor
-from twisted.protocols.ftp import FTPFactory, FTPRealm
+import sys
+from twisted.python import log
 
-#
-# First, set up a portal (twisted.cred.portal.Portal). This will be used
-# to authenticate user logins, including anonymous logins.
-#
-# Part of this will be to establish the "realm" of the server - the most
-# important task in this case is to establish where anonymous users will
-# have default access to. In a real world scenario this would typically
-# point to something like '/pub' but for this example it is pointed at the
-# current working directory.
-#
-# The other important part of the portal setup is to point it to a list of
-# credential checkers. In this case, the first of these is used to grant
-# access to anonymous users and is relatively simple; the second is a very
-# primitive password checker.  This example uses a plain text password file
-# that has one username:password pair per line. This checker *does* provide
-# a hashing interface, and one would normally want to use it instead of
-# plain text storage for anything remotely resembling a 'live' network. In
-# this case, the file "pass.dat" is used, and stored in the same directory
-# as the server. BAD.
-#
-# Create a pass.dat file which looks like this:
-#
-# =====================
-#   jeff:bozo
-#   grimmtooth:bozo2
-# =====================
-#
-print(os.getcwd().join("home"))
-p = Portal(FTPRealm(os.getcwd().join("home")), [AllowAnonymousAccess(), FilePasswordDB("pass.dat")])
-#
-# Once the portal is set up, start up the FTPFactory and pass the portal to
-# it on startup. FTPFactory will start up a twisted.protocols.ftp.FTP()
-# handler for each incoming OPEN request. Business as usual in Twisted land.
-#
+log.startLogging(sys.stdout)
+
+# class MyFTPRealm(FTPRealm):
+#     def requestAvatar(self, avatarId, mind, *interfaces):
+#         print("Request for avatarId:", avatarId)
+#         avatar = super(MyFTPRealm, self).requestAvatar(avatarId, mind, *interfaces)
+#         print("Avatar:", avatar)
+#         return avatar
+
+# with open("./pass.dat", "r") as file:
+#     print("Contenuto di pass.dat:")
+#     for line in file:
+#         print(line.strip())
+
+# try:
+#     p = Portal(MyFTPRealm("./"), [AllowAnonymousAccess(), FilePasswordDB("./pass.dat")])
+
+# except Exception as e:
+#     print(f"Errore durante la creazione del portal: {e}")
+
+# f = FTPFactory(p)
+# reactor.listenTCP(21, f)
+# reactor.run()
+from twisted.cred.checkers import FilePasswordDB
+from twisted.cred.portal import Portal
+from twisted.protocols.ftp import FTPFactory, FTPRealm
+from twisted.internet import reactor
+from twisted.cred.checkers import ICredentialsChecker
+from twisted.cred.credentials import IUsernamePassword
+from twisted.cred.error import UnauthorizedLogin
+
+from zope.interface import implementer
+
+@implementer(ICredentialsChecker)
+class SimpleUserChecker:
+    credentialInterfaces = (IUsernamePassword,)
+
+    def __init__(self, valid_user, valid_password):
+        self.valid_user = valid_user
+        self.valid_password = valid_password
+
+    def requestAvatarId(self, credentials):
+        if credentials.username == self.valid_user and credentials.password == self.valid_password:
+            # Credenziali valide
+            return credentials.username
+        else:
+            # Credenziali non valide
+            raise UnauthorizedLogin("Credenziali non valide")
+
+# Configurazione delle credenziali hard-coded
+valid_user = "root"
+valid_password = "root"
+
+# Configurazione del portal
+p = Portal(FTPRealm("./"), [AllowAnonymousAccess(), SimpleUserChecker(valid_user, valid_password)])
+
+# Configurazione della factory FTP
 f = FTPFactory(p)
 
-#
-# You know this part. Point the reactor to port 21 coupled with the above factory,
-# and start the event loop.
-#
+# Avvio del server FTP sulla porta 21
 reactor.listenTCP(21, f)
+
+# Avvio del reattore
 reactor.run()
