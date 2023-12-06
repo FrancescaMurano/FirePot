@@ -4,7 +4,7 @@
 """
 An example FTP server with minimal user authentication.
 """
-
+import os
 from twisted.cred.checkers import AllowAnonymousAccess, FilePasswordDB
 from twisted.cred.portal import Portal
 from twisted.internet import reactor
@@ -37,8 +37,8 @@ from twisted.protocols.ftp import FTPFactory, FTPRealm
 #   grimmtooth:bozo2
 # =====================
 #
-p = Portal(FTPRealm("./home"), [AllowAnonymousAccess(), FilePasswordDB("pass.dat")])
-
+print(os.getcwd().join("home"))
+p = Portal(FTPRealm(os.getcwd().join("home")), [AllowAnonymousAccess(), FilePasswordDB("pass.dat")])
 #
 # Once the portal is set up, start up the FTPFactory and pass the portal to
 # it on startup. FTPFactory will start up a twisted.protocols.ftp.FTP()
