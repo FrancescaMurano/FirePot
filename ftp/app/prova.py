@@ -1,43 +1,28 @@
-from asyncssh import SFTPError
-from twisted.protocols.ftp import FTP, FTPFactory, FTPRealm
-from twisted.cred.portal import Portal
-from twisted.cred.checkers import AllowAnonymousAccess
-from twisted.internet import reactor
+from pyftpdlib.authorizers import DummyAuthorizer
+from pyftpdlib.handlers import FTPHandler
+from pyftpdlib.servers import FTPServer
 
-class MyFTP(FTP):
-    def ftp_STOR(self, path):
-        """
-        Sovrascrivi questo metodo per gestire il comando STOR (PUT).
-        """
-        # Esegui la tua logica personalizzata qui
-        try:
-            self.dtpInstance = self.dtpFactory.buildDTPConnection(self)
-            self.dtpInstance.startReceiver()
-            self.dtpInstance.consumer = self.file_system.openForWritingAscii(path)
-        except FileNotFoundError:
-            self.respond("550 File not found")
-        except PermissionError:
-            self.respond("550 Permission denied")
-        except SFTPError as e:
-            self.respond(f"550 {e}")
-        else:
-            self.respond("150 File status okay; about to open data connection.")
+def on_stor_handler(conn, file_path, callback=None):
+    """
+    Gestisce l'evento STOR (inserimento).
+    Puoi inserire qui la tua logica di controllo dell'inserimento.
+    """
+    print("PROVA STORE")
+    # Esempio: Blocca l'inserimento e restituisci un messaggio di successo
+    conn.respond("550 Permission denied. Insertion is blocked.")
 
-class MyFTPRealm(FTPRealm):
-    def buildProtocol(self, addr):
-        p = MyFTP()
-        p.portal = self.portal
-        p.root = self
-        return p
+# Crea un authorizer con un utente anonimo e un utente con credenziali
+authorizer = DummyAuthorizer()
+authorizer.add_anonymous(".")
+authorizer.add_user("root", "root", ".", perm="elradfmw")
 
-# Crea un portal con il realm e un checker AllowAnonymousAccess
-p = Portal(MyFTPRealm("./"), [AllowAnonymousAccess()])
+# Crea un gestore FTP personalizzato
+handler = FTPHandler
+handler.on_stor = on_stor_handler  # Assegna la funzione di gestione STOR
 
-# Crea una FTPFactory con il portal
-f = FTPFactory(p)
+# Crea il server FTP
+server = FTPServer(("127.0.0.1", 21), handler)
+server.authorizer = authorizer
 
-# Ascolta sulla porta 21
-reactor.listenTCP(21, f)
-
-# Avvia il loop degli eventi di Twisted
-reactor.run()
+# Avvia il server FTP
+server.serve_forever()
