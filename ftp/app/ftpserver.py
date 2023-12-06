@@ -32,9 +32,10 @@ from twisted.cred.checkers import FilePasswordDB
 from twisted.cred.portal import Portal
 from twisted.protocols.ftp import FTPFactory, FTPRealm
 from twisted.internet import reactor
-from twisted.cred.checkers import ICredentialsChecker
+from twisted.cred.checkers import ICredentialsChecker,InMemoryUsernamePasswordDatabaseDontUse
 from twisted.cred.credentials import IUsernamePassword
 from twisted.cred.error import UnauthorizedLogin
+
 
 from zope.interface import implementer
 
@@ -47,19 +48,25 @@ class SimpleUserChecker:
         self.valid_password = valid_password
 
     def requestAvatarId(self, credentials):
+        print("Tentativo di login con username:", credentials.username, "e password:", credentials.password)
         if credentials.username == self.valid_user and credentials.password == self.valid_password:
-            # Credenziali valide
+            print("Credenziali valide")
             return credentials.username
         else:
-            # Credenziali non valide
+            print("Credenziali non valide")
             raise UnauthorizedLogin("Credenziali non valide")
+
 
 # Configurazione delle credenziali hard-coded
 valid_user = "root"
 valid_password = "root"
-
+        
+users_checker = InMemoryUsernamePasswordDatabaseDontUse()
+users_checker.addUser("root","root")
 # Configurazione del portal
-p = Portal(FTPRealm("./"), [AllowAnonymousAccess(), SimpleUserChecker(valid_user, valid_password)])
+p = Portal(FTPRealm("./"), [AllowAnonymousAccess()])
+p.registerChecker(users_checker, IUsernamePassword)
+
 
 # Configurazione della factory FTP
 f = FTPFactory(p)
