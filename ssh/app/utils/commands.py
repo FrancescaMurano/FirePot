@@ -1,3 +1,7 @@
+ERROR_GEN = "Error: The sintax of the command is incorrect."
+
+ERROR_PATH = "Error: The system cannot find the path specified."
+
 WHITELIST_COMMANDS = {
   "cd": ["cd keys",
      "cd keys/",
@@ -94,3 +98,4 @@ IP_A_RESPONSE = "\
    \tvalid_lft forever preferred_lft forever\r\n\
    \tinet6 fe80::215:5dff:fef9:1b74/64 scope link\r\n\
    \tvalid_lft forever preferred_lft forever\r\n"
+
