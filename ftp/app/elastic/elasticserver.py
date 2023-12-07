@@ -33,6 +33,7 @@ class ElasticServer:
     def insert_info_ip(self, json_ip_data):
         try:
             self.es.index(
+                id = json_ip_data['ipAddress'],
                 index='info_ip_ftp',
                 document=json_ip_data
             )

@@ -30,7 +30,6 @@ class LogHandler(logging.StreamHandler):
 
         super().emit(record)
 
-
 def remove_files_by_names(directory, filenames):
     """
     Rimuove i file con i nomi specificati dalla directory.
