@@ -4,7 +4,7 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 import logging
 
-PORT = 21
+PORT = 2121
 ADDRESS = ''
 TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
 DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
