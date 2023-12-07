@@ -6,8 +6,8 @@ import logging
 
 PORT = 2121
 ADDRESS = ''
-TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
-DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
+TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
+DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
 
 
 def remove_files_by_names(directory, filenames):
