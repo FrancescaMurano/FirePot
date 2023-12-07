@@ -3,7 +3,6 @@ import datetime
 
 class ModbusRequest:
     def __init__(self, request: str) -> None:
-        print(request)
         self.date = datetime.datetime.now().isoformat()
 
         reg1 = '(?P<type>Data\sReceived):\s(?P<request>.+)'

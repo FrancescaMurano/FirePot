@@ -1,18 +1,30 @@
+import asyncio
 import os
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 import logging
 from pyftpdlib.handlers import PassiveDTP,ActiveDTP
+from elastic.elasticserver import ElasticServer
+from ftp_requests import FTPRequest
+from utils.utils_ip_info import get_ip_info
 
-PORT = 21
+PORT = 2121
 ADDRESS = ''
 # TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
 # DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
-# TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
-# DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
-TRAP_PATH =  os.path.join(os.getcwd(),"home")
-DIRECTORY_PATH =  os.path.join(os.getcwd())
+TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
+DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
+# TRAP_PATH =  os.path.join(os.getcwd(),"home")
+# DIRECTORY_PATH =  os.path.join(os.getcwd())
+
+class LogHandler(logging.StreamHandler):
+    def emit(self, record: logging.LogRecord) -> None:
+        elastic = ElasticServer()
+        print(FTPRequest(record.getMessage()).get_ftp_data_json())
+        elastic.insert_data(FTPRequest(record.getMessage()).get_ftp_data_json())
+        super().emit(record)
+
 
 def remove_files_by_names(directory, filenames):
     """
@@ -27,25 +39,29 @@ def remove_files_by_names(directory, filenames):
             print(f"File '{filename}' non trovato.")
         except Exception as e:
             print(f"Errore durante la rimozione di '{filename}': {e}")
+
 class MyActiveDTP(ActiveDTP):
     def __init__(self, inst, *args, **kwargs):
         super().__init__(inst, *args, **kwargs)
         self.port = 6006  # Imposta la porta attiva desiderata
+
 class MyFTPHandler(FTPHandler):
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.file_added = []
         self.log_directory = DIRECTORY_PATH  # Sostituisci con il percorso desiderato
         self.log_file_path = os.path.join(self.log_directory, "ftp_actions.log")
         self.insertion_blocked = False
         self.client_ip = ""
 
-        logging.basicConfig(
-            filename=self.log_file_path,
-            level=logging.INFO,
-            format='%(asctime)s [%(levelname)s]: %(message)s',
-            datefmt='%Y-%m-%d %H:%M:%S'
-        )
+        ftp_logger = logging.getLogger()
+        ftp_logger.setLevel(logging.ERROR)
+        ftp_logger.addHandler(LogHandler())
+
+        self.elastic = ElasticServer()
+
 
     def log_action(self, ip_address,action_message):
         logging.info(f"{ip_address} - {action_message}")
@@ -54,7 +70,6 @@ class MyFTPHandler(FTPHandler):
         self.client_ip = self.remote_ip
         return super()._on_dtp_connection()
     
-
     def ftp_STOR(self, file, mode='w'):
 
             if self.insertion_blocked:
@@ -72,6 +87,7 @@ class MyFTPHandler(FTPHandler):
     
     def close(self):
         remove_files_by_names(TRAP_PATH, self.file_added)
+        self.elastic.insert_info_ip(get_ip_info(self.remote_ip))
         return super().close()
 
 def main():
@@ -89,12 +105,9 @@ def main():
     server.max_cons = 256
     server.max_cons_per_ip = 5
     server.handler.passive_ports = range(6000, 6006)
-
-    # Imposta la modalità attiva e la porta dati attiva
     server.handler.active_dtp = MyActiveDTP
-    
-    server.handler.masquerade_address = "34.17.52.4"
-    # start ftp server
+    server.handler.masquerade_address = "0.0.0.0"
+
     server.serve_forever()
 
 if __name__ == '__main__':

@@ -16,8 +16,8 @@ class ConnectionLogHandler(logging.StreamHandler):
     def emit(self, record: LogRecord) -> None:
         server = ElasticServer()
         log_message = self.format(record)
+        
         if "Client Connected" in log_message:
-            # r1 = ModbusConnectionRequest(record.getMessage())
             super().emit(record)
 
         elif "Data Received" in log_message or "Factory Request" in log_message:
