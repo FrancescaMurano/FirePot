@@ -1,0 +1,199 @@
+2023-12-07 08:26:07 [INFO]: 5.77.118.75:48627-[user] USER 'user' logged in.
+2023-12-07 08:26:24 [INFO]: 5.77.118.75:48627-[user] FTP session closed (disconnect).
+2023-12-07 08:26:41 [INFO]: 5.77.118.75:48539-[] FTP session opened (connect)
+2023-12-07 08:26:44 [INFO]: 5.77.118.75:48539-[anonymous] USER 'anonymous' logged in.
+2023-12-07 08:26:47 [INFO]: 5.77.118.75:48539-[anonymous] FTP session closed (disconnect).
+2023-12-07 08:26:50 [INFO]: received interrupt signal
+2023-12-07 08:26:50 [INFO]: >>> shutting down FTP server, 1 socket(s), pid=94819 <<<
+2023-12-07 08:28:17 [INFO]: 5.77.118.75:48530-[user] USER 'user' logged in.
+2023-12-07 08:28:48 [INFO]: received interrupt signal
+2023-12-07 08:28:48 [INFO]: >>> shutting down FTP server, 3 socket(s), pid=94845 <<<
+2023-12-07 08:28:48 [INFO]: 5.77.118.75:48530-[user] FTP session closed (disconnect).
+2023-12-07 08:29:16 [INFO]: 5.77.118.75:48411-[anonymous] USER 'anonymous' logged in.
+2023-12-07 08:29:37 [INFO]: 5.77.118.75:48411-[anonymous] FTP session closed (disconnect).
+2023-12-07 08:29:38 [INFO]: received interrupt signal
+2023-12-07 08:29:38 [INFO]: >>> shutting down FTP server, 1 socket(s), pid=94848 <<<
+2023-12-07 08:59:33 [INFO]: 5.77.118.75:48600-[user] USER 'user' logged in.
+2023-12-07 08:59:50 [INFO]: received interrupt signal
+2023-12-07 08:59:50 [INFO]: >>> shutting down FTP server, 3 socket(s), pid=95003 <<<
+2023-12-07 08:59:50 [INFO]: 5.77.118.75:48600-[user] FTP session closed (disconnect).
+2023-12-07 09:03:23 [INFO]: 5.77.118.75:48598-[user] USER 'user' logged in.
+2023-12-07 09:03:43 [INFO]: 5.77.118.75:48598-[user] FTP session closed (disconnect).
+2023-12-07 09:03:44 [INFO]: 5.77.118.75:48527-[] FTP session opened (connect)
+2023-12-07 09:03:44 [INFO]: 5.77.118.75:48527-[user] USER 'user' logged in.
+2023-12-07 09:04:04 [INFO]: 5.77.118.75:48527-[user] FTP session closed (disconnect).
+2023-12-07 09:05:47 [INFO]: received interrupt signal
+2023-12-07 09:05:47 [INFO]: >>> shutting down FTP server, 1 socket(s), pid=95019 <<<
+2023-12-07 09:08:28 [INFO]: 5.77.118.75:48488-[user] USER 'user' logged in.
+2023-12-07 09:08:28 [ERROR]: unhandled exception in instance <MyFTPHandler(id=139871953833408, addr='5.77.118.75:48488', user='user')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/asyncore.py", line 83, in read
+    obj.handle_read_event()
+  File "/usr/lib/python3.9/asyncore.py", line 420, in handle_read_event
+    self.handle_read()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/ioloop.py", line 932, in handle_read
+    asynchat.async_chat.handle_read(self)
+  File "/usr/lib/python3.9/asynchat.py", line 171, in handle_read
+    self.found_terminator()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1452, in found_terminator
+    self.pre_process_command(line, cmd, arg)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1569, in pre_process_command
+    self.process_command(cmd, arg, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1580, in process_command
+    method(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 2033, in ftp_PORT
+    self._make_eport(ip, port)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1984, in _make_eport
+    self._dtp_connector = self.active_dtp(ip, port, self)
+TypeError: 'tuple' object is not callable
+2023-12-07 09:08:28 [INFO]: 5.77.118.75:48488-[user] FTP session closed (disconnect).
+2023-12-07 09:08:29 [INFO]: 5.77.118.75:48626-[] FTP session opened (connect)
+2023-12-07 09:08:29 [INFO]: 5.77.118.75:48626-[user] USER 'user' logged in.
+2023-12-07 09:08:29 [ERROR]: unhandled exception in instance <MyFTPHandler(id=139871953833408, addr='5.77.118.75:48626', user='user')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/asyncore.py", line 83, in read
+    obj.handle_read_event()
+  File "/usr/lib/python3.9/asyncore.py", line 420, in handle_read_event
+    self.handle_read()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/ioloop.py", line 932, in handle_read
+    asynchat.async_chat.handle_read(self)
+  File "/usr/lib/python3.9/asynchat.py", line 171, in handle_read
+    self.found_terminator()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1452, in found_terminator
+    self.pre_process_command(line, cmd, arg)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1569, in pre_process_command
+    self.process_command(cmd, arg, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1580, in process_command
+    method(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 2033, in ftp_PORT
+    self._make_eport(ip, port)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1984, in _make_eport
+    self._dtp_connector = self.active_dtp(ip, port, self)
+TypeError: 'tuple' object is not callable
+2023-12-07 09:08:29 [INFO]: 5.77.118.75:48626-[user] FTP session closed (disconnect).
+2023-12-07 09:08:33 [INFO]: 5.77.118.75:48598-[] FTP session opened (connect)
+2023-12-07 09:08:34 [INFO]: 5.77.118.75:48598-[user] USER 'user' logged in.
+2023-12-07 09:08:34 [ERROR]: unhandled exception in instance <MyFTPHandler(id=139871953833408, addr='5.77.118.75:48598', user='user')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/asyncore.py", line 83, in read
+    obj.handle_read_event()
+  File "/usr/lib/python3.9/asyncore.py", line 420, in handle_read_event
+    self.handle_read()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/ioloop.py", line 932, in handle_read
+    asynchat.async_chat.handle_read(self)
+  File "/usr/lib/python3.9/asynchat.py", line 171, in handle_read
+    self.found_terminator()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1452, in found_terminator
+    self.pre_process_command(line, cmd, arg)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1569, in pre_process_command
+    self.process_command(cmd, arg, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1580, in process_command
+    method(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 2033, in ftp_PORT
+    self._make_eport(ip, port)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1984, in _make_eport
+    self._dtp_connector = self.active_dtp(ip, port, self)
+TypeError: 'tuple' object is not callable
+2023-12-07 09:08:34 [INFO]: 5.77.118.75:48598-[user] FTP session closed (disconnect).
+2023-12-07 09:08:34 [INFO]: 5.77.118.75:48610-[] FTP session opened (connect)
+2023-12-07 09:08:34 [INFO]: 5.77.118.75:48610-[user] USER 'user' logged in.
+2023-12-07 09:08:34 [ERROR]: unhandled exception in instance <MyFTPHandler(id=139871953833408, addr='5.77.118.75:48610', user='user')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/asyncore.py", line 83, in read
+    obj.handle_read_event()
+  File "/usr/lib/python3.9/asyncore.py", line 420, in handle_read_event
+    self.handle_read()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/ioloop.py", line 932, in handle_read
+    asynchat.async_chat.handle_read(self)
+  File "/usr/lib/python3.9/asynchat.py", line 171, in handle_read
+    self.found_terminator()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1452, in found_terminator
+    self.pre_process_command(line, cmd, arg)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1569, in pre_process_command
+    self.process_command(cmd, arg, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1580, in process_command
+    method(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 2033, in ftp_PORT
+    self._make_eport(ip, port)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1984, in _make_eport
+    self._dtp_connector = self.active_dtp(ip, port, self)
+TypeError: 'tuple' object is not callable
+2023-12-07 09:08:34 [INFO]: 5.77.118.75:48610-[user] FTP session closed (disconnect).
+2023-12-07 09:10:13 [INFO]: received interrupt signal
+2023-12-07 09:10:13 [INFO]: >>> shutting down FTP server, 1 socket(s), pid=95032 <<<
+2023-12-07 09:11:43 [INFO]: 5.77.118.75:48471-[user] USER 'user' logged in.
+2023-12-07 09:12:03 [INFO]: 5.77.118.75:48471-[user] FTP session closed (disconnect).
+2023-12-07 09:12:03 [INFO]: 5.77.118.75:48544-[] FTP session opened (connect)
+2023-12-07 09:12:03 [INFO]: 5.77.118.75:48544-[user] USER 'user' logged in.
+2023-12-07 09:12:24 [INFO]: 5.77.118.75:48544-[user] FTP session closed (disconnect).
+2023-12-07 09:12:30 [INFO]: 5.77.118.75:48575-[] FTP session opened (connect)
+2023-12-07 09:12:30 [INFO]: 5.77.118.75:48575-[user] USER 'user' logged in.
+2023-12-07 09:13:00 [INFO]: 5.77.118.75:48575-[user] Passive data channel timed out.
+2023-12-07 09:13:40 [INFO]: 5.77.118.75:48575-[user] FTP session closed (disconnect).
+2023-12-07 09:13:40 [INFO]: 5.77.118.75:48398-[] FTP session opened (connect)
+2023-12-07 09:13:40 [INFO]: 5.77.118.75:48398-[user] USER 'user' logged in.
+2023-12-07 09:14:00 [INFO]: 5.77.118.75:48398-[user] FTP session closed (disconnect).
+2023-12-07 09:14:00 [INFO]: 5.77.118.75:48439-[] FTP session opened (connect)
+2023-12-07 09:14:00 [INFO]: 5.77.118.75:48439-[user] USER 'user' logged in.
+2023-12-07 09:14:07 [INFO]: 5.77.118.75:48476-[] FTP session opened (connect)
+2023-12-07 09:14:10 [INFO]: 5.77.118.75:48476-[user] USER 'user' logged in.
+2023-12-07 09:14:21 [INFO]: 5.77.118.75:48439-[user] FTP session closed (disconnect).
+2023-12-07 09:14:42 [INFO]: 5.77.118.75:48476-[user] Active data channel timed out.
+2023-12-07 09:15:48 [INFO]: 5.77.118.75:48602-[] FTP session opened (connect)
+2023-12-07 09:15:48 [INFO]: 5.77.118.75:48602-[user] USER 'user' logged in.
+2023-12-07 09:16:08 [INFO]: 5.77.118.75:48602-[user] FTP session closed (disconnect).
+2023-12-07 09:16:08 [INFO]: 5.77.118.75:48528-[] FTP session opened (connect)
+2023-12-07 09:16:09 [INFO]: 5.77.118.75:48528-[user] USER 'user' logged in.
+2023-12-07 09:16:29 [INFO]: 5.77.118.75:48528-[user] FTP session closed (disconnect).
+2023-12-07 09:17:21 [INFO]: 205.210.31.45:58640-[] FTP session opened (connect)
+2023-12-07 09:17:22 [INFO]: 205.210.31.45:58640-[] FTP session closed (disconnect).
+2023-12-07 09:17:43 [INFO]: received interrupt signal
+2023-12-07 09:17:43 [INFO]: >>> shutting down FTP server, 2 socket(s), pid=95035 <<<
+2023-12-07 09:17:43 [INFO]: 5.77.118.75:48476-[user] FTP session closed (disconnect).
+2023-12-07 09:18:31 [INFO]: 5.77.118.75:48604-[user] USER 'user' logged in.
+2023-12-07 09:19:02 [INFO]: 5.77.118.75:48444-[] FTP session opened (connect)
+2023-12-07 09:19:02 [INFO]: 5.77.118.75:48444-[user] USER 'user' logged in.
+2023-12-07 09:19:02 [INFO]: 5.77.118.75:48444-[user] CWD /home/fmuranofcg/myhoneypot/ftp/app/home 250
+2023-12-07 09:19:02 [INFO]:  - STOR: User user uploaded file bozza.txt
+2023-12-07 09:19:22 [INFO]: 5.77.118.75:48604-[user] CWD /home/fmuranofcg/myhoneypot/ftp/app/home/keys 250
+2023-12-07 09:19:23 [INFO]: 5.77.118.75:48604-[user] CWD /home/fmuranofcg/myhoneypot/ftp/app/home/payments 250
+2023-12-07 09:19:24 [INFO]: 5.77.118.75:48604-[user] CWD /home/fmuranofcg/myhoneypot/ftp/app/home/users 250
+2023-12-07 09:20:13 [INFO]: 5.77.118.75:48444-[user] RETR /home/fmuranofcg/myhoneypot/ftp/app/home/bozza.txt completed=1 bytes=21 seconds=0.0
+2023-12-07 09:21:05 [INFO]: 5.77.118.75:48444-[user] CWD /home/fmuranofcg/myhoneypot/ftp/app/home/users 250
+2023-12-07 09:21:05 [INFO]: 5.77.118.75:48444-[user] RETR /home/fmuranofcg/myhoneypot/ftp/app/home/users/user.txt completed=1 bytes=34 seconds=0.0
+2023-12-07 09:21:21 [INFO]: 5.77.118.75:48604-[user] FTP session closed (disconnect).
+2023-12-07 09:21:21 [INFO]: 5.77.118.75:48444-[user] FTP session closed (disconnect).
+2023-12-07 09:21:49 [INFO]: 5.77.118.75:48454-[] FTP session opened (connect)
+2023-12-07 09:21:53 [INFO]: 5.77.118.75:48454-[user] USER 'user' logged in.
+2023-12-07 09:22:00 [INFO]: 5.77.118.75:48454-[user] FTP session closed (disconnect).
+2023-12-07 09:22:25 [INFO]: 5.77.118.75:48412-[] FTP session opened (connect)
+2023-12-07 09:22:28 [INFO]: 5.77.118.75:48412-[user] USER 'user' logged in.
+2023-12-07 09:23:00 [INFO]: 5.77.118.75:48412-[user] Active data channel timed out.
+2023-12-07 09:23:04 [INFO]: 5.77.118.75:48523-[] FTP session opened (connect)
+2023-12-07 09:23:05 [INFO]: 5.77.118.75:48523-[user] USER 'user' logged in.
+2023-12-07 09:23:09 [INFO]: 5.77.118.75:48523-[user] FTP session closed (disconnect).
+2023-12-07 09:25:51 [INFO]: 5.77.118.75:48515-[user] USER 'user' logged in.
+2023-12-07 09:25:52 [ERROR]: unhandled exception in instance <MyFTPHandler(id=140580700831312, addr='5.77.118.75:48515', user='user')>
+Traceback (most recent call last):
+  File "/usr/lib/python3.9/asyncore.py", line 83, in read
+    obj.handle_read_event()
+  File "/usr/lib/python3.9/asyncore.py", line 420, in handle_read_event
+    self.handle_read()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/ioloop.py", line 932, in handle_read
+    asynchat.async_chat.handle_read(self)
+  File "/usr/lib/python3.9/asynchat.py", line 171, in handle_read
+    self.found_terminator()
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1452, in found_terminator
+    self.pre_process_command(line, cmd, arg)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1569, in pre_process_command
+    self.process_command(cmd, arg, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1580, in process_command
+    method(*args, **kwargs)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 2033, in ftp_PORT
+    self._make_eport(ip, port)
+  File "/usr/local/lib/python3.9/dist-packages/pyftpdlib/handlers.py", line 1984, in _make_eport
+    self._dtp_connector = self.active_dtp(ip, port, self)
+TypeError: 'tuple' object is not callable
+2023-12-07 09:25:52 [INFO]: 5.77.118.75:48515-[user] FTP session closed (disconnect).
+2023-12-07 09:26:52 [INFO]: received interrupt signal
+2023-12-07 09:26:52 [INFO]: >>> shutting down FTP server, 1 socket(s), pid=95102 <<<

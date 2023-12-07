@@ -4,7 +4,7 @@ from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 import logging
 
-PORT = 2121
+PORT = 21
 ADDRESS = ''
 # TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
 # DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
@@ -77,17 +77,16 @@ def main():
     authorizer.add_anonymous(TRAP_PATH)
 
     handler = MyFTPHandler
-    del handler.proto_cmds['PASV']
-    del handler.proto_cmds['EPSV']
     handler.authorizer = authorizer
     handler.banner = "pyftpdlib based ftpd ready."
 
     address = (ADDRESS,PORT)
     server = FTPServer(address, handler)
-
     server.max_cons = 256
     server.max_cons_per_ip = 5
-
+    server.handler.passive_ports = range(6000, 6005)
+    server.handler.active_dtp = ("0.0.0.0", 6000)
+    server.handler.masquerade_address = "34.17.52.4"
     # start ftp server
     server.serve_forever()
 
