@@ -74,6 +74,8 @@ def main():
     authorizer.add_anonymous(os.path.join(os.getcwd(),"ftp","app","home"))
 
     handler = MyFTPHandler
+    del handler.proto_cmds['PASV']
+    del handler.proto_cmds['EPSV']
     handler.authorizer = authorizer
     handler.banner = "pyftpdlib based ftpd ready."
 
