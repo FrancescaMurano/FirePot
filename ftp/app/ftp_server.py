@@ -3,7 +3,7 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 import logging
-from pyftpdlib.handlers import PassiveDTP
+from pyftpdlib.handlers import PassiveDTP,ActiveDTP
 
 PORT = 21
 ADDRESS = ''
@@ -27,7 +27,10 @@ def remove_files_by_names(directory, filenames):
             print(f"File '{filename}' non trovato.")
         except Exception as e:
             print(f"Errore durante la rimozione di '{filename}': {e}")
-
+class MyActiveDTP(ActiveDTP):
+    def __init__(self, inst, *args, **kwargs):
+        super().__init__(inst, *args, **kwargs)
+        self.port = 6006  # Imposta la porta attiva desiderata
 class MyFTPHandler(FTPHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -88,8 +91,7 @@ def main():
     server.handler.passive_ports = range(6000, 6006)
 
     # Imposta la modalità attiva e la porta dati attiva
-    server.handler.active_dtp = PassiveDTP
-    server.handler.active_dtp.set_port_range(6006, 6006)
+    server.handler.active_dtp = MyActiveDTP
     
     server.handler.masquerade_address = "34.17.52.4"
     # start ftp server
