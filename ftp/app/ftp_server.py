@@ -56,26 +56,21 @@ class MyFTPHandler(FTPHandler):
 
         self.file_added = []
         self.log_directory = DIRECTORY_PATH  # Sostituisci con il percorso desiderato
-        self.log_file_path = os.path.join(self.log_directory, "ftp_actions.log")
         self.insertion_blocked = False
         self.client_ip = ""
-
-        ftp_logger = logging.getLogger()
-        ftp_logger.setLevel(logging.ERROR)
-        ftp_logger.addHandler(LogHandler())
+        self.port = ""
+        self.ftp_logger = logging.getLogger()
+        self.ftp_logger.setLevel(logging.ERROR)
+        self.ftp_logger.addHandler(LogHandler())
 
         self.elastic = ElasticServer()
 
-
-    def log_action(self, ip_address,action_message):
-        logging.info(f"{ip_address} - {action_message}")
-    
     def _on_dtp_connection(self):
         self.client_ip = self.remote_ip
+        self.client_port = self.remote_port
         return super()._on_dtp_connection()
     
     def ftp_STOR(self, file, mode='w'):
-
             if self.insertion_blocked:
                 self.respond("554 Permission denied. Insertion is blocked.")
             else:
@@ -86,7 +81,8 @@ class MyFTPHandler(FTPHandler):
                 with open(name, 'w') as error_file:
                     error_file.write("Error, file corrupted")
 
-                self.log_action(action_message=f"STOR: User {self.username} uploaded file {file_name}",ip_address=self.client_ip)
+                msg = f"STOR: User {self.username} uploaded file {file_name}"
+                logging.error(f"{self.client_ip}:{self.port}-[{self.username}] - {msg} ")
                 self.respond("226 Transfer complete.")
     
     def close(self):

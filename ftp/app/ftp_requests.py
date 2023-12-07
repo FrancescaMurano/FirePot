@@ -12,7 +12,7 @@ class FTPRequest:
         self.message= ""
         print(request)
 
-        reg = r'(?P<ip>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(::\d{1,5})):(?P<port>\d{1,5})-\[(?P<name>[A-Za-z0.-9]*)\]\s(?P<message>.*)'
+        reg = r'(?P<ip>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(::\d{1,5})):(?P<port>\d{0,5})-\[(?P<name>[A-Za-z0.-9]*)\]\s(?P<message>.*)'
         
         search = re.search(reg,request)
 
