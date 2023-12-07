@@ -1,3 +1,4 @@
+import subprocess
 import asyncio
 import os
 from pyftpdlib.authorizers import DummyAuthorizer
@@ -9,14 +10,14 @@ from elastic.elasticserver import ElasticServer
 from ftp_requests import FTPRequest
 from utils.utils_ip_info import get_ip_info
 
-PORT = 2121
+PORT = 21
 ADDRESS = '0.0.0.0'
 
-# TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
-# DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
+TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
+DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
 
-TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
-DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
+# TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
+# DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
 
 #TRAP_PATH =  os.path.join(os.getcwd(),"home")
 #DIRECTORY_PATH =  os.path.join(os.getcwd())
@@ -29,6 +30,30 @@ class LogHandler(logging.StreamHandler):
             elastic.insert_data(FTPRequest(record.getMessage()).get_ftp_data_json())
 
         super().emit(record)
+
+def restore_files():
+    # Percorsi delle cartelle di origine e destinazione
+    origin_dir = os.path.join(os.getcwd(),"ftp","app","files","home")
+    remove_dir = os.path.join(os.getcwd(),"ftp","app","home")
+    new_dir = os.path.join(os.getcwd(),"ftp","app")
+    print("1---------------",origin_dir) 
+    print("2---------------",remove_dir) 
+    print("3---------------",new_dir) 
+
+
+    print("REMOVE DIR",remove_dir)
+    remove_p = ["rm","-r",remove_dir]
+    cp_p = ["cp", "-r", origin_dir, new_dir]
+
+    # Esegui il comando
+    try:
+        remove_process = subprocess.Popen(remove_p, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        copy_process = subprocess.Popen(cp_p, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except Exception as e:
+        print(str(e))
+    # o_remove, errore = remove_process.communicate()
+    # o_copy, errore = copy_process.communicate()
+
 
 def remove_files_by_names(directory, filenames):
     """
@@ -87,6 +112,7 @@ class MyFTPHandler(FTPHandler):
     
     def close(self):
         remove_files_by_names(TRAP_PATH, self.file_added)
+        restore_files()
         self.elastic.insert_info_ip(get_ip_info(self.remote_ip))
         return super().close()
 
@@ -106,7 +132,7 @@ def main():
     server.max_cons_per_ip = 5
     server.handler.passive_ports = range(6000, 6006)
     server.handler.active_dtp = MyActiveDTP
-    server.handler.masquerade_address = "34.17.52.4"
+    server.handler.masquerade_address = "127.0.0.1"
 
     server.serve_forever()
 
