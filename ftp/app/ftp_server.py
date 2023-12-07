@@ -82,7 +82,7 @@ class MyFTPHandler(FTPHandler):
                     error_file.write("Error, file corrupted")
 
                 msg = f"STOR: User {self.username} uploaded file {file_name}"
-                logging.error(f"{self.client_ip}:{self.port}-[{self.username}] - {msg} ")
+                logging.error(f"{self.client_ip}:{self.port}-[{self.username}] {msg} ")
                 self.respond("226 Transfer complete.")
     
     def close(self):
