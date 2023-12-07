@@ -10,14 +10,14 @@ from elastic.elasticserver import ElasticServer
 from ftp_requests import FTPRequest
 from utils.utils_ip_info import get_ip_info
 
-PORT = 21
+PORT = 2121
 ADDRESS = '0.0.0.0'
 
-TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
-DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
+# TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
+# DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
 
-# TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
-# DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
+TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
+DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
 
 #TRAP_PATH =  os.path.join(os.getcwd(),"home")
 #DIRECTORY_PATH =  os.path.join(os.getcwd())
@@ -32,16 +32,12 @@ class LogHandler(logging.StreamHandler):
         super().emit(record)
 
 def restore_files():
+
     # Percorsi delle cartelle di origine e destinazione
     origin_dir = os.path.join(os.getcwd(),"ftp","app","files","home")
     remove_dir = os.path.join(os.getcwd(),"ftp","app","home")
     new_dir = os.path.join(os.getcwd(),"ftp","app")
-    print("1---------------",origin_dir) 
-    print("2---------------",remove_dir) 
-    print("3---------------",new_dir) 
 
-
-    print("REMOVE DIR",remove_dir)
     remove_p = ["rm","-r",remove_dir]
     cp_p = ["cp", "-r", origin_dir, new_dir]
 
@@ -49,16 +45,16 @@ def restore_files():
     try:
         remove_process = subprocess.Popen(remove_p, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         copy_process = subprocess.Popen(cp_p, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
     except Exception as e:
         print(str(e))
-    # o_remove, errore = remove_process.communicate()
-    # o_copy, errore = copy_process.communicate()
+
+    remove_process.communicate()
+    copy_process.communicate()
 
 
 def remove_files_by_names(directory, filenames):
-    """
-    Rimuove i file con i nomi specificati dalla directory.
-    """
+
     for filename in filenames:
         file_path = os.path.join(directory, filename)
         try:
@@ -119,7 +115,7 @@ class MyFTPHandler(FTPHandler):
 def main():
     authorizer = DummyAuthorizer()
 
-    authorizer.add_user('user', '12345', TRAP_PATH, perm='elradfmwMT')
+    authorizer.add_user('root', 'root', TRAP_PATH, perm='elradfmwMT')
     authorizer.add_anonymous(TRAP_PATH)
 
     handler = MyFTPHandler
@@ -132,7 +128,7 @@ def main():
     server.max_cons_per_ip = 5
     server.handler.passive_ports = range(6000, 6006)
     server.handler.active_dtp = MyActiveDTP
-    server.handler.masquerade_address = "127.0.0.1"
+    server.handler.masquerade_address = "34.17.52.4"
 
     server.serve_forever()
 
