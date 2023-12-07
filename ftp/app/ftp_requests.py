@@ -26,7 +26,7 @@ class FTPRequest:
     def get_ftp_data_json(self):
         return {
             'time':  self.date ,
-            'ip':    self.ip,
+            'ipAddress':    self.ip,
             'port':  self.port,
             'name':  self.name,
             'message':self.message,
