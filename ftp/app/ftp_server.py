@@ -3,6 +3,7 @@ from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 import logging
+from pyftpdlib.handlers import PassiveDTP
 
 PORT = 21
 ADDRESS = ''
@@ -84,8 +85,12 @@ def main():
     server = FTPServer(address, handler)
     server.max_cons = 256
     server.max_cons_per_ip = 5
-    server.handler.passive_ports = range(6000, 6005)
-    server.handler.active_dtp = ("0.0.0.0", 6000)
+    server.handler.passive_ports = range(6000, 6006)
+
+    # Imposta la modalità attiva e la porta dati attiva
+    server.handler.active_dtp = PassiveDTP
+    server.handler.active_dtp.set_port_range(6006, 6006)
+    
     server.handler.masquerade_address = "34.17.52.4"
     # start ftp server
     server.serve_forever()
