@@ -106,7 +106,7 @@ def main():
     server.max_cons_per_ip = 5
     server.handler.passive_ports = range(6000, 6006)
     server.handler.active_dtp = MyActiveDTP
-    server.handler.masquerade_address = "0.0.0.0"
+    server.handler.masquerade_address = "34.17.52.4"
 
     server.serve_forever()
 
