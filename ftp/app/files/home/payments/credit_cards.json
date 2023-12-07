@@ -1,0 +1,62 @@
+[
+    {
+        "IssuingNetwork": "AMERICANEXPRESS",
+        "CardNumber": "370106901994217",
+        "Bank": "AMERICANEXPRESS",
+        "Name": "AstridSalmela",
+        "Address": "PierreDelannoyplaats222",
+        "Country": "BELGIUM",
+        "MoneyRange": "$731",
+        "CVV": 3979,
+        "Expiry": "01/2025",
+        "Pin": 6622
+    },
+    {
+        "IssuingNetwork": "AMERICANEXPRESS",
+        "CardNumber": "370105553063255",
+        "Bank": "AMERICANEXPRESS",
+        "Name": "AstridAslakhanov",
+        "Address": "Noordstraat22",
+        "Country": "BELGIUM",
+        "MoneyRange": "$919",
+        "CVV": 2309,
+        "Expiry": "11/2025",
+        "Pin": 7590
+    },
+    {
+        "IssuingNetwork": "AMERICANEXPRESS",
+        "CardNumber": "370105909311820",
+        "Bank": "AMERICANEXPRESS",
+        "Name": "TatsuharuChibueze",
+        "Address": "RueduBienne425",
+        "Country": "BELGIUM",
+        "MoneyRange": "$563",
+        "CVV": 7886,
+        "Expiry": "04/2027",
+        "Pin": 1860
+    },
+    {
+        "IssuingNetwork": "AMERICANEXPRESS",
+        "CardNumber": "370108963340529",
+        "Bank": "AMERICANEXPRESS",
+        "Name": "KifleCastaneda",
+        "Address": "Schietboompleinstraat254",
+        "Country": "BELGIUM",
+        "MoneyRange": "$688",
+        "CVV": 2179,
+        "Expiry": "11/2025",
+        "Pin": 3392
+    },
+    {
+        "IssuingNetwork": "AMERICANEXPRESS",
+        "CardNumber": "370107267820780",
+        "Bank": "AMERICANEXPRESS",
+        "Name": "AsmaitBergqvist",
+        "Address": "RuedelaPoste54",
+        "Country": "BELGIUM",
+        "MoneyRange": "$681",
+        "CVV": 8552,
+        "Expiry": "03/2023",
+        "Pin": 6890
+    }
+]
