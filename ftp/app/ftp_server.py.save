@@ -1,35 +1,17 @@
-import asyncio
 import os
 from pyftpdlib.authorizers import DummyAuthorizer
 from pyftpdlib.handlers import FTPHandler
 from pyftpdlib.servers import FTPServer
 import logging
-from pyftpdlib.handlers import PassiveDTP,ActiveDTP
-from elastic.elasticserver import ElasticServer
-from ftp_requests import FTPRequest
-from utils.utils_ip_info import get_ip_info
 
-PORT = 2121
+PORT = 21
 ADDRESS = ''
-
 # TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
 # DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
-
-TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
-DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
-
-#TRAP_PATH =  os.path.join(os.getcwd(),"home")
-#DIRECTORY_PATH =  os.path.join(os.getcwd())
-
-class LogHandler(logging.StreamHandler):
-    def emit(self, record: logging.LogRecord) -> None:
-        elastic = ElasticServer()
-        print(FTPRequest(record.getMessage()).get_ftp_data_json())
-        if(record.getMessage().find("disconnect")) != -1:
-            elastic.insert_data(FTPRequest(record.getMessage()).get_ftp_data_json())
-
-        super().emit(record)
-
+# TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
+# DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
+TRAP_PATH =  os.path.join(os.getcwd(),"home")
+DIRECTORY_PATH =  os.path.join(os.getcwd())
 
 def remove_files_by_names(directory, filenames):
     """
@@ -45,28 +27,21 @@ def remove_files_by_names(directory, filenames):
         except Exception as e:
             print(f"Errore durante la rimozione di '{filename}': {e}")
 
-class MyActiveDTP(ActiveDTP):
-    def __init__(self, inst, *args, **kwargs):
-        super().__init__(inst, *args, **kwargs)
-        self.port = 6006  # Imposta la porta attiva desiderata
-
 class MyFTPHandler(FTPHandler):
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.file_added = []
         self.log_directory = DIRECTORY_PATH  # Sostituisci con il percorso desiderato
         self.log_file_path = os.path.join(self.log_directory, "ftp_actions.log")
         self.insertion_blocked = False
         self.client_ip = ""
 
-        ftp_logger = logging.getLogger()
-        ftp_logger.setLevel(logging.ERROR)
-        ftp_logger.addHandler(LogHandler())
-
-        self.elastic = ElasticServer()
-
+        logging.basicConfig(
+            filename=self.log_file_path,
+            level=logging.INFO,
+            format='%(asctime)s [%(levelname)s]: %(message)s',
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
 
     def log_action(self, ip_address,action_message):
         logging.info(f"{ip_address} - {action_message}")
@@ -75,6 +50,7 @@ class MyFTPHandler(FTPHandler):
         self.client_ip = self.remote_ip
         return super()._on_dtp_connection()
     
+
     def ftp_STOR(self, file, mode='w'):
 
             if self.insertion_blocked:
@@ -92,7 +68,6 @@ class MyFTPHandler(FTPHandler):
     
     def close(self):
         remove_files_by_names(TRAP_PATH, self.file_added)
-        self.elastic.insert_info_ip(get_ip_info(self.remote_ip))
         return super().close()
 
 def main():
@@ -102,17 +77,48 @@ def main():
     authorizer.add_anonymous(TRAP_PATH)
 
     handler = MyFTPHandler
+    del handler.proto_cmds['PASV']
+    del handler.proto_cmds['EPSV']
     handler.authorizer = authorizer
     handler.banner = "pyftpdlib based ftpd ready."
 
+In pyftpdlib, se vuoi specificare un'unica porta dati in modalità attiva, puoi farlo attraverso l'attributo `active_dtp` dell'handler FTP. Ecco un esempio:
+
+```python
+from pyftpdlib.authorizers import DummyAuthorizer
+from pyftpdlib.handlers import FTPHandler
+from pyftpdlib.servers import ThreadedFTPServer
+
+# Configura l'autorizzatore
+authorizer = DummyAuthorizer()
+authorizer.add_user("username", "password", "/path/to/ftp/folder", perm="elradfmw")
+
+# Configura l'handler FTP
+handler = FTPHandler
+handler.authorizer = authorizer
+
+# Configura il server FTP
+server = ThreadedFTPServer(("0.0.0.0", 21), handler)
+
+# Imposta la modalità attiva e la porta dati (opzionale)
+server.handler.active_dtp = (b'127.0.0.1', 6000)  # Imposta l'indirizzo IP e la porta dati attivi
+
+# Avvia il server
+server.serve_forever()
+```
+
+Nel codice sopra, ho utilizzato `server.handler.active_dtp` per impostare l'indirizzo IP e la porta dati attivi. Modifica i valori di `(b'127.0.0.1', 6000)` secondo le tue esigenze. Tieni presente che l'indirizzo IP dovrebbe essere sostituito con l'indirizzo IP del server.
+
+In modalità attiva, il client invia un comando PORT contenente l'indirizzo IP e la porta a cui il server deve connettersi per il trasferimento dati. L'impostazione di `active_dtp` consente di specificare manualmente questo indirizzo IP e questa porta.
+
+Ricorda di aprire la porta specificata nel firewall del server se decidi di utilizzare una porta diversa da quella predefinita (generalmente la porta 20 per la modalità attiva).
     address = (ADDRESS,PORT)
     server = FTPServer(address, handler)
+
     server.max_cons = 256
     server.max_cons_per_ip = 5
-    server.handler.passive_ports = range(6000, 6006)
-    server.handler.active_dtp = MyActiveDTP
-    server.handler.masquerade_address = "34.17.52.4"
 
+    # start ftp server
     server.serve_forever()
 
 if __name__ == '__main__':
