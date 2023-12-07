@@ -6,9 +6,12 @@ import logging
 
 PORT = 2121
 ADDRESS = ''
-TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
-DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
-
+# TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
+# DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
+# TRAP_PATH =  os.path.join(os.getcwd(),"app","home")
+# DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
+TRAP_PATH =  os.path.join(os.getcwd(),"home")
+DIRECTORY_PATH =  os.path.join(os.getcwd())
 
 def remove_files_by_names(directory, filenames):
     """
@@ -55,7 +58,7 @@ class MyFTPHandler(FTPHandler):
             else:
                 file_name  = os.path.basename(file)
                 self.file_added.append(file_name)
-                name = os.path.join(os.getcwd(),"ftp","app","home",file_name)
+                name = os.path.join(TRAP_PATH,file_name)
 
                 with open(name, 'w') as error_file:
                     error_file.write("Error, file corrupted")
@@ -70,8 +73,8 @@ class MyFTPHandler(FTPHandler):
 def main():
     authorizer = DummyAuthorizer()
 
-    authorizer.add_user('user', '12345',os.path.join(os.getcwd(),"ftp","app","home"), perm='elradfmwMT')
-    authorizer.add_anonymous(os.path.join(os.getcwd(),"ftp","app","home"))
+    authorizer.add_user('user', '12345', TRAP_PATH, perm='elradfmwMT')
+    authorizer.add_anonymous(TRAP_PATH)
 
     handler = MyFTPHandler
     del handler.proto_cmds['PASV']
