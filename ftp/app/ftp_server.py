@@ -10,7 +10,7 @@ from ftp_requests import FTPRequest
 from utils.utils_ip_info import get_ip_info
 
 PORT = 2121
-ADDRESS = ''
+ADDRESS = '0.0.0.0'
 
 # TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
 # DIRECTORY_PATH =  os.path.join(os.getcwd(),"ftp","app")
@@ -25,7 +25,7 @@ class LogHandler(logging.StreamHandler):
     def emit(self, record: logging.LogRecord) -> None:
         elastic = ElasticServer()
         print(FTPRequest(record.getMessage()).get_ftp_data_json())
-        if(record.getMessage().find("disconnect")) != -1:
+        if(record.getMessage().find("disconnect")) == -1:
             elastic.insert_data(FTPRequest(record.getMessage()).get_ftp_data_json())
 
         super().emit(record)
