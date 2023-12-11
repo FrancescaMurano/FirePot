@@ -92,7 +92,7 @@ async def handle_client(reader, writer):
     finally:
         elastic.insert_ip_data(request.get_ip_info())
         print("Closing connection")
-        # writer.close()
+        writer.close()
 
 async def start_server():
     server = await asyncio.start_server(handle_client, "0.0.0.0", PORT)
