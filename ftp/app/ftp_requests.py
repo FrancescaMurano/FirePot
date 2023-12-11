@@ -23,8 +23,10 @@ class FTPRequest:
             self.port = search.group("port")
             self.name = search.group("name")
             self.message = search.group("message")
+        
     
     def get_ftp_data_json(self):
+        data = {}
         data = get_ip_info(self.ip)
         data['time'] = self.date
         data['port'] = self.port
