@@ -94,7 +94,6 @@ class SSHSession(asyncssh.SSHServerSession):
                     self.output = self.output[:-1]
                     self.chan.write(b'\x08')
                     self.chan.write(b' \x08')
-
             
         except Exception as e:
             print(str(e))
