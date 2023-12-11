@@ -53,7 +53,6 @@ def exec_command(cmd: str, path:Path):
                 
             elif cmd.startswith("ls"):
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                # result.check_returncode()
                 output = result.stdout.decode("utf-8")
                 error = result.stderr.decode("utf-8")
             
@@ -65,25 +64,17 @@ def exec_command(cmd: str, path:Path):
             
             else:
                 result = subprocess.run(cmd, shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                # result.check_returncode()
                 output = result.stdout.decode("utf-8")
                 error = result.stderr.decode("utf-8")
         else:
             if cmd.startswith("cd") and cmd.find("..")!=-1:
                 path.reset_path()
                 result = subprocess.run("cd .", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-                # result.check_returncode()
                 output = result.stdout.decode("utf-8")
                 error = result.stderr.decode("utf-8")
 
             elif cmd.startswith("cd") and cmd.find("..")==-1:
                 output = ERROR_PATH
-
-            # elif cmd.startswith("ls"):
-            #     result = subprocess.run("ls", shell=True,cwd=path.get_current_path(), stdout=subprocess.PIPE,stdin=subprocess.PIPE,stderr=subprocess.PIPE)
-            #     # result.check_returncode()
-            #     output = result.stdout.decode("utf-8")
-            #     error = result.stderr.decode("utf-8")
 
             elif error == "":
                 output = ERROR_GEN

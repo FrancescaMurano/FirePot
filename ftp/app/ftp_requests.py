@@ -1,5 +1,6 @@
 import datetime
 import re
+from utils.utils_ip_info import get_ip_info
 
 class FTPRequest:
 
@@ -24,10 +25,10 @@ class FTPRequest:
             self.message = search.group("message")
     
     def get_ftp_data_json(self):
-        return {
-            'time':  self.date ,
-            'ipAddress': self.ip,
-            'port':  self.port,
-            'name':  self.name,
-            'message':self.message,
-        }
+        data = get_ip_info(self.ip)
+        data['time'] = self.date
+        data['port'] = self.port
+        data['name'] = self.name
+        data['message'] = self.message
+
+        return data
