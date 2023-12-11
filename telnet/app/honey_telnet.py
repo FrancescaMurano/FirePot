@@ -8,7 +8,7 @@ from log_requests import Request
 
 PORT = 2323
 BANNER = "Telnet"
-p = Path()
+
 
 # commands
 UP_KEY = "\x1b[A".encode()
@@ -21,10 +21,10 @@ async def handle_client(reader, writer):
     ip = writer.get_extra_info('peername')[0]
     elastic = ElasticServer()
     request = Request(ip)
-
+    path = Path()
     output = ""
 
-    START = p.get_cli_display_path().encode('utf-8',errors='ignore')
+    START = path.get_cli_display_path().encode('utf-8',errors='ignore')
     writer.write(START)
 
     try:
@@ -52,7 +52,7 @@ async def handle_client(reader, writer):
                 for cmd in multiple_cmds:
                     cmd = cmd.strip()
                     try:
-                        result, error = exec_command(cmd)
+                        result, error = exec_command(cmd,path)
                         elastic.insert_ip_request(request.get_request_json(cmd))
                         results.append(result)
                         if result == "":
@@ -68,7 +68,7 @@ async def handle_client(reader, writer):
                     res = res.replace(b"\n", b"\r\n")
                     writer.write(res)
 
-                writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
+                writer.write(path.get_cli_display_path().encode('utf-8',errors='ignore'))
                 output = ""
 
             elif command == b'\x08':  # cancel only user input
@@ -86,17 +86,13 @@ async def handle_client(reader, writer):
 
     except (ConnectionResetError, BrokenPipeError):
         pass  # Handle specific socket errors
-
-    # except Exception as e:
-    #     writer.write(f"Error: {str(e)}\r\n".encode("utf-8").strip())
-    #     writer.write(p.get_cli_display_path().encode('utf-8',errors='ignore'))
-    #     print(f"Error: {str(e)}")
-    #     output = ""
+    except Exception as e:
+        print(str(e))
 
     finally:
         elastic.insert_ip_data(request.get_ip_info())
         print("Closing connection")
-        writer.close()
+        # writer.close()
 
 async def start_server():
     server = await asyncio.start_server(handle_client, "0.0.0.0", PORT)

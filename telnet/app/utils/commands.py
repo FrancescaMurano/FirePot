@@ -1,3 +1,6 @@
+ERROR_GEN = "Error: The sintax of the command is incorrect."
+ERROR_PATH = "Error: The system cannot find the path specified."
+
 WHITELIST_COMMANDS = {
   "cd": ["cd keys",
      "cd keys/",
@@ -5,7 +8,6 @@ WHITELIST_COMMANDS = {
      "cd payments/",
      "cd users",
      "cd users/"],
-  "dir":["dir"],
   "type":["type credit_cards.json"],
   "ls": ["ls","ls -l","ls -a", "ls -R","ls -d", "ls -R","ls -r","ls -t","ls ../keys","ls ../payments","ls ../users"],
   "cat": ["cat keys/p_key.pkcs1",

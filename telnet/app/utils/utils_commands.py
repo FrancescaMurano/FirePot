@@ -1,11 +1,9 @@
 import subprocess
 import os
 import re
-from .commands import WHITELIST_COMMANDS, IFCONFIG_FULL_RESPONSE,IP_A_RESPONSE,IFCONFIG_SIMPLE_RESPONSE
+from .commands import *
 from utils.utils_path import Path
 
-ERROR_GEN = "Error: The sintax of the command is incorrect."
-ERROR_PATH = "Error: The system cannot find the path specified."
 
 def check_command(cmd: str):
     echo_pattern = r'^echo\s+[A-Za-z0-9\s]+$'
@@ -21,8 +19,7 @@ def check_command(cmd: str):
 
     return found
 
-def exec_command(cmd: str):
-    path = Path()
+def exec_command(cmd: str, path:Path):
     output = ""
     error = ERROR_GEN
     

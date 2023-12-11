@@ -1,6 +1,6 @@
 import subprocess
 import os
-from .commands import WHITELIST_COMMANDS, IFCONFIG_FULL_RESPONSE,IP_A_RESPONSE,IFCONFIG_SIMPLE_RESPONSE
+from .commands import *
 
 import re
 from utils.utils_path import Path
