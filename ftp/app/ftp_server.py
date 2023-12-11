@@ -25,7 +25,7 @@ DIRECTORY_PATH =  os.path.join(os.getcwd(),"app")
 class LogHandler(logging.StreamHandler):
     def emit(self, record: logging.LogRecord) -> None:
         elastic = ElasticServer()
-        print(FTPRequest(record.getMessage()).get_ftp_data_json())
+
         if(record.getMessage().find("disconnect")) == -1:
             elastic.insert_data(FTPRequest(record.getMessage()).get_ftp_data_json())
 
@@ -49,8 +49,8 @@ def restore_files():
     except Exception as e:
         print(str(e))
 
-    remove_process.communicate()
-    copy_process.communicate()
+    # remove_process.communicate()
+    # copy_process.communicate()
 
 
 def remove_files_by_names(directory, filenames):

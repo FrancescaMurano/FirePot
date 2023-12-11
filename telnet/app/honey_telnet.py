@@ -58,7 +58,6 @@ async def handle_client(reader, writer):
                         if result == "":
                             results.append(error)
                     except (CalledProcessError,ValueError) as e:
-                        # writer.write("Error: the sintax of the command is incorrect\r\n".encode("utf-8").strip())
                         print(f"Error: {str(e)}")
                         output = ""
 
