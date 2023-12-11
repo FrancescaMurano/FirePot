@@ -120,10 +120,11 @@ def main():
 
     handler = MyFTPHandler
     handler.authorizer = authorizer
-    handler.banner = "pyftpdlib based ftpd ready."
+    handler.banner = "ProFTPD 1.3.7"
 
     address = (ADDRESS,PORT)
     server = FTPServer(address, handler)
+    
     server.max_cons = 256
     server.max_cons_per_ip = 5
     server.handler.passive_ports = range(6000, 6006)
