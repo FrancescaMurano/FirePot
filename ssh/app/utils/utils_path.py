@@ -3,12 +3,12 @@ import pathlib
 
 class Path:
 
-    _instance = None
+    # _instance = None
 
-    def __new__(cls) -> None:
-        if not  cls._instance:
-            cls._instance = super(Path,cls).__new__(cls)
-        return cls._instance
+    # def __new__(cls) -> None:
+    #     if not  cls._instance:
+    #         cls._instance = super(Path,cls).__new__(cls)
+    #     return cls._instance
     
     def __init__(self) -> None:
         self.initial_PATH =  '\r\ndebian@root: '
