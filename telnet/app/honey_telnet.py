@@ -76,7 +76,7 @@ async def handle_client(reader, writer):
                     output = output[:-2]
                     writer.write(b' \x08')
                     writer.write(b' \x08')
-            elif command == b'\x03' or command == b"\xff\xf4\xff\xfd\x06":  # command to quit
+            elif command == b'\x03' or command == b"\xff\xf4\xff\xfd\x06" or command==b'exit':  # command to quit
                 writer.write("\r\n".encode('utf-8',errors='ignore'))
                 break  # exit the loop when client sends Ctrl+C
 
