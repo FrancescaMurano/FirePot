@@ -74,7 +74,6 @@ class MyFTPHandler(FTPHandler):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.file_added = []
         self.log_directory = DIRECTORY_PATH  # Sostituisci con il percorso desiderato
         self.insertion_blocked = False
@@ -124,12 +123,12 @@ def main():
 
     address = (ADDRESS,PORT)
     server = FTPServer(address, handler)
-    
     server.max_cons = 256
     server.max_cons_per_ip = 5
     server.handler.passive_ports = range(6000, 6006)
     server.handler.active_dtp = MyActiveDTP
     server.handler.masquerade_address = "34.17.52.4"
+    server.handler.banner = "ProFTPD 1.3.7"
 
     server.serve_forever()
 
