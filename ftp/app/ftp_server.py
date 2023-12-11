@@ -79,6 +79,7 @@ class MyFTPHandler(FTPHandler):
         self.insertion_blocked = False
         self.client_ip = ""
         self.port = ""
+        self.banner = "ProFTPD 1.3.7"
         self.ftp_logger = logging.getLogger()
         self.ftp_logger.setLevel(logging.ERROR)
         self.ftp_logger.addHandler(LogHandler())
@@ -119,8 +120,6 @@ def main():
 
     handler = MyFTPHandler
     handler.authorizer = authorizer
-    handler.banner = "ProFTPD 1.3.7"
-
     address = (ADDRESS,PORT)
     server = FTPServer(address, handler)
     server.max_cons = 256
@@ -128,7 +127,6 @@ def main():
     server.handler.passive_ports = range(6000, 6006)
     server.handler.active_dtp = MyActiveDTP
     server.handler.masquerade_address = "34.17.52.4"
-    server.handler.banner = "ProFTPD 1.3.7"
 
     server.serve_forever()
 
