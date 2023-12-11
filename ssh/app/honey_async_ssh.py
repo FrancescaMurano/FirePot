@@ -76,7 +76,7 @@ class SSHSession(asyncssh.SSHServerSession):
 
                 for cmd in multiple_cmds:
                     cmd = cmd.lstrip()
-                    result, error = exec_command(cmd)
+                    result, error = exec_command(cmd,self.path)
                     if error:
                         print("error", error)
                     self.server.insert_ip_request(self.request.get_request_json(cmd))

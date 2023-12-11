@@ -23,8 +23,7 @@ def check_command(cmd: str):
 
     return found
 
-def exec_command(cmd: str):
-    path = Path()
+def exec_command(cmd: str,path : Path):
     output = ""
     error = ""
     cmd = cmd.strip()
