@@ -1,5 +1,4 @@
-from elasticsearch import AsyncElasticsearch
-# from elasticsearch_dsl import Q,Search
+from elasticsearch import Elasticsearch
 
 IP = "34.17.54.125"
 class ElasticServer:
@@ -17,18 +16,18 @@ class ElasticServer:
             username = "elastic"
             password = "+RIk0Zh-KI=oJL*bkopF"
 
-            self.es = AsyncElasticsearch(f"http://{IP}:9200",
+            self.es = Elasticsearch(f"http://{IP}:9200",
                     # ca_certs="config/certs/http_ca.crt",
                     basic_auth=(username,password))
 
-    async def insert_ip_data(self,json_ip_data):
-        await self.es.index(
+    def insert_ip_data(self,json_ip_data):
+         self.es.index(
             index='info_ip_ssh',
             document=json_ip_data
         )
 
-    async def insert_ip_request(self,json_ip_requests):
-        await self.es.index(
+    def insert_ip_request(self,json_ip_requests):
+         self.es.index(
             index='commands_ssh',
             document=json_ip_requests
     )

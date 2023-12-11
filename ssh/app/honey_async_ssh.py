@@ -2,16 +2,16 @@ import asyncio
 from typing import Mapping, Tuple
 import asyncssh
 import re
-from asyncssh.connection import SSHServerConnection
 from utils.utils_path import Path
-from asyncssh.misc import MaybeAwait
 from utils.utils_commands import exec_command
 from log_requests import Request
 from elastic.elasticserver import ElasticServer
 
 PORT = 2222
 BANNER = "SSH-2.0-OpenSSH_5.3"
+import tracemalloc
 
+tracemalloc.start(15)
 UP_KEY = "\x1b[A".encode()
 DOWN_KEY = "\x1b[B".encode()
 RIGHT_KEY = "\x1b[C".encode()
@@ -22,7 +22,8 @@ BACK_KEY = "\x7f".encode()
 class SSHServer(asyncssh.SSHServer):
     def __init__(self):
         super().__init__()
-    def connection_made(self, conn):
+    
+    def connection_made(self, conn: asyncssh.SSHServerConnection):
         conn.send_auth_banner('SSH-2.0-OpenSSH_5.3\n')
         super().connection_made(conn)
 
@@ -83,8 +84,6 @@ class SSHSession(asyncssh.SSHServerSession):
 
                 for res in results:
                     res = res.encode("utf-8")
-                    # res = res.replace(b"  ", b"")
-                    # res = res.replace(b"\n", b"\r\n")
                     self.chan.write(res.decode("utf-8"))
 
                 self.chan.write(self.path.get_cli_display_path())
@@ -94,9 +93,13 @@ class SSHSession(asyncssh.SSHServerSession):
                     self.output = self.output[:-1]
                     self.chan.write(b'\x08')
                     self.chan.write(b' \x08')
-            
         except Exception as e:
             print(str(e))
+
+    def connection_lost(self, exc: Exception | None) -> None:
+        self.server.insert_ip_data(self.request.get_ip_info())  
+        return super().connection_lost(exc)
+
 
 async def start_server():
     await asyncssh.create_server(
