@@ -82,11 +82,10 @@ class SSHSession(asyncssh.SSHServerSession):
                     results.append(result)
 
                 for res in results:
-                    print("res", res)
-                    # res = res.encode("utf-8")
-                    # res = res.replace(b"  ", b"")
-                    # res = res.replace(b"\n", b"\r\n")
-                    self.chan.write(res)
+                    res = res.encode("utf-8")
+                    res = res.replace(b"  ", b"")
+                    res = res.replace(b"\n", b"\r\n")
+                    self.chan.write(res.decode("utf-8"))
 
                 self.chan.write(self.path.get_cli_display_path())
                 # self.output = ""
