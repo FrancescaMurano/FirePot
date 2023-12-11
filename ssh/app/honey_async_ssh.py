@@ -1,5 +1,5 @@
 import asyncio
-from typing import Mapping, Tuple
+from typing import Mapping, Optional, Tuple
 import asyncssh
 import re
 from utils.utils_path import Path
@@ -96,7 +96,7 @@ class SSHSession(asyncssh.SSHServerSession):
         except Exception as e:
             print(str(e))
 
-    def connection_lost(self, exc: Exception | None) -> None:
+    def connection_lost(self, exc: Optional[Exception]) -> None:
         self.server.insert_ip_data(self.request.get_ip_info())  
         return super().connection_lost(exc)
 
