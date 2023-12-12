@@ -5,3 +5,4 @@ requests
 elasticsearch==8.11.0
 elasticsearch-dsl>=8.0.0,<9.0.0
 aiohttp
+asyncssh

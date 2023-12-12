@@ -9,8 +9,7 @@ from log_requests import Request
 PORT = 2323
 BANNER = "Telnet"
 
-
-# commands
+# skip commands
 UP_KEY = "\x1b[A".encode()
 DOWN_KEY = "\x1b[B".encode()
 RIGHT_KEY = "\x1b[C".encode()
@@ -30,7 +29,6 @@ async def handle_client(reader, writer):
     try:
         while True:
             command: bytes = await reader.read(100000)
-            print(f"command {command}")
             output += command.decode('utf-8',errors='ignore')
 
             if not command:
