@@ -1,52 +1,27 @@
 class UserInput:
-    PORT_SSH_REMOTE = None
-    PORT_SSH_REAL = None
+    PORT_SSH_REMOTE = 22
+    PORT_SSH_REAL = 2222
 
-    PORT_TELNET_REMOTE = None
-    PORT_TELNET_REAL = None
+    PORT_TELNET_REMOTE = 23
+    PORT_TELNET_REAL = 2323
 
-    PORT_MODBUS_REMOTE = None
-    PORT_MODBUS_REAL = None
+    PORT_MODBUS_REMOTE = 502
+    PORT_MODBUS_REAL = 5002
 
-    PORT_FTP_REMOTE = None
-    PORT_FTP_REAL = None
+    PORT_FTP_REMOTE = 21
+    PORT_FTP_REAL = 2121
 
-    @classmethod
-    def ssh_ports(cls):
-        # Richiedi input all'utente o inserisci i dati in qualche altro modo
-        cls.PORT_SSH_REMOTE = input("SSH remote port: ")
-        cls.PORT_SSH_REAL = input("SSH real port: ")
+    IP_ADDRESS = "localhost"
+    FTP_PASSIVE_PORT_START = 6000
+    FTP_PASSIVE_PORT_END = 6006
 
-    # @classmethod
-    # def modbus_ports(cls):
-    #     # Stampa i valori delle variabili statiche
-    #     cls.PORT_SSH_REMOTE = input("Inserisci il valore per variabile_statica_1: ")
-    #     cls.PORT_SSH_REAL = input("Inserisci il valore per variabile_statica_2: ")
-    #     print(f"variabile_statica_1: {cls.variabile_statica_1}")
-    #     print(f"variabile_statica_2: {cls.variabile_statica_2}")
-
-    #     @classmethod
-    # def ssh_ports(cls):
-    #     # Richiedi input all'utente o inserisci i dati in qualche altro modo
-    #     cls.variabile_statica_1 = input("Inserisci il valore per variabile_statica_1: ")
-    #     cls.variabile_statica_2 = input("Inserisci il valore per variabile_statica_2: ")
-
-    # @classmethod
-    # def ftp_ports(cls):
-    #     # Stampa i valori delle variabili statiche
-    #     print(f"variabile_statica_1: {cls.variabile_statica_1}")
-    #     print(f"variabile_statica_2: {cls.variabile_statica_2}")
-
-    # @classmethod
-    # def telnet_ports(cls):
-    #     # Richiedi input all'utente o inserisci i dati in qualche altro modo
-    #     cls.variabile_statica_1 = input("Inserisci il valore per variabile_statica_1: ")
-    #     cls.variabile_statica_2 = input("Inserisci il valore per variabile_statica_2: ")
-
-    # @classmethod
-    # def modbus_ports(cls):
-    #     # Stampa i valori delle variabili statiche
-    #     print(f"variabile_statica_1: {cls.variabile_statica_1}")
-    #     print(f"variabile_statica_2: {cls.variabile_statica_2}")
-
-UserInput.ssh_ports()
+# 1. docker compose up --> elastic e kibana
+# 2. POST delle dashboard
+# 3. scelta degli honeypot da utilizzare (SSH,TELNET,MODBUS,FTP)
+# 4. apertura delle porte -- abilitazione porte su iptables
+# 5. scelta delle porte
+# 6. docker con le porte scelte 
+# 7. Menu:
+#   - Visualizza dashboard
+#   - exit and down
+#   - exit 

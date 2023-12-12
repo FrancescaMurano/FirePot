@@ -9,8 +9,9 @@ from pyftpdlib.handlers import PassiveDTP,ActiveDTP
 from elastic.elasticserver import ElasticServer
 from ftp_requests import FTPRequest
 from utils.utils_ip_info import get_ip_info
+from starter import UserInput
 
-PORT = 2121
+PORT = UserInput.PORT_FTP_REAL
 ADDRESS = '0.0.0.0'
 
 # TRAP_PATH =  os.path.join(os.getcwd(),"ftp","app","home")
@@ -124,9 +125,9 @@ def main():
     server = FTPServer(address, handler)
     server.max_cons = 256
     server.max_cons_per_ip = 5
-    server.handler.passive_ports = range(6000, 6006)
+    server.handler.passive_ports = range(UserInput.FTP_PASSIVE_PORT_START,UserInput.FTP_PASSIVE_PORT_END)
     server.handler.active_dtp = MyActiveDTP
-    server.handler.masquerade_address = "34.17.52.4"
+    server.handler.masquerade_address = UserInput.IP_ADDRESS
 
     server.serve_forever()
 

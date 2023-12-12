@@ -6,8 +6,10 @@ from utils.utils_path import Path
 from utils.utils_commands import exec_command
 from log_requests import Request
 from elastic.elasticserver import ElasticServer
+from starter import UserInput
 
-PORT = 2222
+
+PORT = UserInput.PORT_SSH_REMOTE
 BANNER = "SSH-2.0-OpenSSH_5.3"
 import tracemalloc
 
