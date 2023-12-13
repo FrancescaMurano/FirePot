@@ -13,18 +13,18 @@ class ElasticServer:
         if not hasattr(self,'initialized'):
             self.initialized = True
 
-            username = "elastic"
-            password = "i3K3w1$dsO:Ge2,1Ec,r"
-
             self.es = Elasticsearch(f"http://{IP}:9200",
                     # ca_certs="config/certs/http_ca.crt",
-                    basic_auth=(username,password))
+                    )
 
     def insert_ip_data(self,json_ip_data):
-         self.es.index(
+        try:
+            self.es.index(
             index='info_ip_ssh',
             document=json_ip_data
         )
+        except Exception as e:
+            print(str(e))
 
     def insert_ip_request(self,json_ip_requests):
         try:

@@ -113,10 +113,10 @@ def main(
         honey_path =  os.path.join(os.getcwd(),"docker-compose_ssh.yml")
 
         # Imposta le variabili d'ambiente
-        variable = f"set VALORE1=${ssh_real_port}"
+        variable = f"export VALORE1=${ssh_real_port}"
         subprocess.run(variable, shell=True)
         # Esegui Docker Compose
-        docker_compose_command = f"docker-compose -f {elastic_kibana_path} build && docker-compose -f {honey_path} up -d"
+        docker_compose_command = f"docker-compose -f {honey_path} build && docker-compose -f {honey_path} -f {elastic_kibana_path} up -d"
         subprocess.run(docker_compose_command, shell=True)
 
 if __name__ == "__main__":
