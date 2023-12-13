@@ -6,18 +6,14 @@ from utils.utils_path import Path
 from utils.utils_commands import exec_command
 from log_requests import Request
 from elastic.elasticserver import ElasticServer
+import os
 
-
-# import os
-# valore1 = os.getenv("VALORE1",2222)
-PORT = 2222
-
-
+PORT = os.getenv("SSH_REAL_PORT",2222)
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
 import tracemalloc
-
 tracemalloc.start(15)
+
 UP_KEY = "\x1b[A".encode()
 DOWN_KEY = "\x1b[B".encode()
 RIGHT_KEY = "\x1b[C".encode()
@@ -51,7 +47,9 @@ class SSHSession(asyncssh.SSHServerSession):
         self.request = None
         self.path = Path()
 
+
     def connection_made(self, chan):
+            
             self.chan = chan
             peer_addr = chan.get_extra_info('peername')
             self.chan.write(self.path.get_cli_display_path())
@@ -85,6 +83,7 @@ class SSHSession(asyncssh.SSHServerSession):
                     result, error = exec_command(cmd,self.path)
                     if error:
                         print("error", error)
+                    
                     self.server.insert_ip_request(self.request.get_request_json(cmd))
                     results.append(result)
 
@@ -103,7 +102,7 @@ class SSHSession(asyncssh.SSHServerSession):
             print(str(e))
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
-        # self.server.insert_ip_data(self.request.get_ip_info())  
+        self.server.insert_ip_data(self.request.get_ip_info())  
         return super().connection_lost(exc)
 
 

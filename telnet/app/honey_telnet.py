@@ -4,10 +4,11 @@ from elastic.elasticserver import ElasticServer
 from utils.utils_path import *
 from utils.utils_commands import exec_command
 from log_requests import Request
-from starter import UserInput
+import os
+PORT = os.getenv("TELNET_REAL_PORT",2323)
 
-PORT = UserInput.PORT_TELNET_REAL
 BANNER = "Telnet"
+
 
 # skip commands
 UP_KEY = "\x1b[A".encode()

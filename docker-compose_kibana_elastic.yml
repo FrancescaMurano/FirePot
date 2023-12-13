@@ -23,7 +23,6 @@ services:
             cpus: '2.0'
           reservations:
             cpus: '1.0'
-
   kibana:
     image: docker.elastic.co/kibana/kibana:8.11.0
     container_name: kibana
@@ -39,6 +38,6 @@ services:
             cpus: '2.0'
           reservations:
             cpus: '1.0'
-
+  
 networks:
   elastic:

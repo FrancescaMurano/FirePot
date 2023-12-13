@@ -7,10 +7,10 @@ from elastic.elasticserver import ElasticServer
 from modbus.modbus_request import ModbusRequest
 from utils.utils_ip_info import get_ip_info
 from twisted.internet import protocol
-from starter import UserInput
+import os
 
 ADDR = "0.0.0.0"
-PORT = UserInput.PORT_MODBUS_REAL
+PORT = int(os.getenv("MODBUS_REAL_PORT",default="5002"))
 
 class ConnectionLogHandler(logging.StreamHandler):
     

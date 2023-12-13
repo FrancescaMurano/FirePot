@@ -12,16 +12,18 @@ class Path:
     
     def __init__(self) -> None:
         self.initial_PATH =  '\r\ndebian@root: '
+        print(not hasattr(self,'initialized'))
         if not hasattr(self,'initialized'):
-            # self.__start_full_path = os.path.join(os.getcwd(),"home")
+            try:
+                # self.__start_full_path = os.path.join(os.getcwd(),"home")
 
-            self.__start_full_path = os.path.join(os.getcwd(),"app","home")
-
-            #self.start_full_path = os.path.join(os.getcwd(),"ssh","app","home")
-
-            self.__current_path = self.__start_full_path
-            self.initialized = True
-            self.__path_display =  self.initial_PATH
+                self.__start_full_path = os.path.join(os.getcwd(),"app","home")
+                # self.__start_full_path = os.path.join(os.getcwd(),"ssh","app","home")
+                self.__current_path = self.__start_full_path
+                self.initialized = True
+                self.__path_display =  self.initial_PATH
+            except Exception as e:
+                print(str(e))
 
     def get_start_full_path(self)-> str:
         return self.__start_full_path

@@ -1,32 +1,3 @@
-class UserInput:
-    PORT_SSH_REMOTE = 22
-    PORT_SSH_REAL = 2222
-
-    PORT_TELNET_REMOTE = 23
-    PORT_TELNET_REAL = 2323
-
-    PORT_MODBUS_REMOTE = 502
-    PORT_MODBUS_REAL = 5002
-
-    PORT_FTP_REMOTE = 21
-    PORT_FTP_REAL = 2121
-
-    IP_ADDRESS = "localhost"
-    FTP_PASSIVE_PORT_START = 6000
-    FTP_PASSIVE_PORT_END = 6006
-
-# 1. docker compose up --> elastic e kibana
-# 2. POST delle dashboard
-# 3. scelta degli honeypot da utilizzare (SSH,TELNET,MODBUS,FTP)
-# 4. apertura delle porte -- abilitazione porte su iptables
-# 5. scelta delle porte
-# 6. docker con le porte scelte 
-# 7. Menu:
-#   - Visualizza dashboard
-#   - exit and down
-#   - exit 
-
-
 import subprocess
 import time
 import typer
@@ -40,8 +11,14 @@ app = typer.Typer()
 session = Session()
 console = Console(record=True)
 
-
-
+typer.echo("\
+                \n██╗░░██╗░█████╗░███╗░░██╗███████╗██╗░░░██╗██████╗░░█████╗░████████╗  ██████╗░░░░░█████╗░\
+                \n██║░░██║██╔══██╗████╗░██║██╔════╝╚██╗░██╔╝██╔══██╗██╔══██╗╚══██╔══╝  ╚════██╗░░░██╔══██╗\
+                \n███████║██║░░██║██╔██╗██║█████╗░░░╚████╔╝░██████╔╝██║░░██║░░░██║░░░  ░█████╔╝░░░██║░░██║\
+                \n██╔══██║██║░░██║██║╚████║██╔══╝░░░░╚██╔╝░░██╔═══╝░██║░░██║░░░██║░░░  ░╚═══██╗░░░██║░░██║\
+                \n██║░░██║╚█████╔╝██║░╚███║███████╗░░░██║░░░██║░░░░░╚█████╔╝░░░██║░░░  ██████╔╝██╗╚█████╔╝\
+                \n╚═╝░░╚═╝░╚════╝░╚═╝░░╚══╝╚══════╝░░░╚═╝░░░╚═╝░░░░░░╚════╝░░░░╚═╝░░░  ╚═════╝░╚═╝░╚════╝░")
+    
 @app.callback()
 def main(
         telnet: bool = typer.Option(
@@ -95,29 +72,72 @@ def main(
             default = 21,
             help = ""
         ),
+        ftp_start_port: int = typer.Option(
+            prompt = True,
+            default = 6000,
+            help = ""
+        ),
+        ftp_end_port: int = typer.Option(
+            prompt = True,
+            default = 6006,
+            help = ""
+        ),
+        ftp_masquerade_address: str = typer.Option(
+            prompt = True,
+            default = "localhost",
+            help = ""
+        ),
         modbus_real_port: int = typer.Option(
             prompt = True,
-            default = 502,
+            default = 5002,
             help = ""
         ),
         modbus_remote_port   : int = typer.Option(
             prompt = True,
-            default = 5002,
+            default = 502,
             help = ""
         ),    
 
 ):
+    
     with console.status("Loading..."):
-        parameters = locals()
-        elastic_kibana_path =  os.path.join(os.getcwd(),"docker-compose_elastic_kibana.yml")
-        honey_path =  os.path.join(os.getcwd(),"docker-compose_ssh.yml")
 
-        # Imposta le variabili d'ambiente
-        variable = f"export VALORE1=${ssh_real_port}"
-        subprocess.run(variable, shell=True)
-        # Esegui Docker Compose
-        docker_compose_command = f"docker-compose -f {honey_path} build && docker-compose -f {honey_path} -f {elastic_kibana_path} up -d"
-        subprocess.run(docker_compose_command, shell=True)
+
+        os.environ["SSH_REAL_PORT"] = str(ssh_real_port)
+        os.environ["SSH_REMOTE_PORT"] = str(ssh_remote_port)
+
+        os.environ["TELNET_REAL_PORT"] = str(telnet_real_port)
+        os.environ["TELNET_REMOTE_PORT"] = str(telnet_remote_port)
+
+        os.environ["MODBUS_REAL_PORT"] = str(modbus_real_port)
+        os.environ["MODBUS_REMOTE_PORT"] = str(modbus_remote_port)
+
+        os.environ["FTP_REAL_PORT"] = str(ftp_real_port)
+        os.environ["FTP_REMOTE_PORT"] = str(ftp_remote_port)
+        os.environ["FTP_START_PORT"] = str(ftp_start_port)
+        os.environ["FTP_END_PORT"] = str(ftp_end_port)
+        os.environ["FTP_MASQUERADE_ADDRESS"] = str(ftp_masquerade_address)
+
+
+        if modbus:
+            modbus_compose = "docker-compose_modbus.yml"
+            command = f"docker-compose -f {modbus_compose} up -d"
+            subprocess.run(command, shell=True)
+
+        if ssh:
+            ssh_compose = "docker-compose_ssh.yml"
+            command = f"docker-compose -f {ssh_compose} up -d"
+            subprocess.run(command, shell=True)
+
+        if telnet:
+            telnet_compose = "docker-compose_telnet.yml"
+            command = f"docker-compose -f {telnet_compose} up -d"
+            subprocess.run(command, shell=True)
+
+        if ftp:    
+            ftp_compose = "docker-compose_ftp.yml"
+            command = f"docker-compose -f {ftp_compose} up -d"
+            subprocess.run(command, shell=True)
 
 if __name__ == "__main__":
     typer.run(main)

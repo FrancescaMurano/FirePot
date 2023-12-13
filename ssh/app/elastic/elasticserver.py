@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-IP = "localhost"
+IP = "34.17.54.125"
 class ElasticServer:
     _instance = None
 
@@ -14,7 +14,7 @@ class ElasticServer:
             self.initialized = True
 
             self.es = Elasticsearch(f"http://{IP}:9200",
-                    # ca_certs="config/certs/http_ca.crt",
+                    # ca_certs="config/certs/http_ca.crt"
                     )
 
     def insert_ip_data(self,json_ip_data):
@@ -45,3 +45,5 @@ class ElasticServer:
 #             #self.es.delete(index="commands_ssh",id=hit.meta.id)
 
 
+e = ElasticServer()
+e.insert_ip_data({})

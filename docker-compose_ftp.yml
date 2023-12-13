@@ -1,0 +1,16 @@
+version: '3'
+services:
+  ftp_service:
+      build:
+        context: ./ftp
+        dockerfile: Dockerfile
+      environment:
+        - FTP_REAL_PORT=${FTP_REAL_PORT}
+        - FTP_REMOTE_PORT=${FTP_REAL_PORT}
+        - FTP_START_PORT=${FTP_START_PORT}
+        - FTP_END_PORT=${FTP_END_PORT}
+        - IP_ELASTIC=${IP_ELASTIC}
+      ports:
+        - "${FTP_REMOTE_PORT}:${FTP_REAL_PORT}"
+        - "${FTP_START_PORT}-${FTP_END_PORT}:${FTP_START_PORT}-${FTP_END_PORT}"
+

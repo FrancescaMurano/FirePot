@@ -1,30 +1,12 @@
 version: '3'
 services:
-  service1:
-    build:
-      context: ./ssh
-      dockerfile: Dockerfile
-    environment:
-      - PARAMETRO1=${VALORE1}
-    ports:
-    - "22:2222"
-  # service2:
-  #   build:
-  #     context: ./ftp
-  #     dockerfile: Dockerfile
-  #   ports:
-  #   - "21:2121"
-  #   - "6000-6005:6000-6005"
-  # service3:
-  #     build:
-  #       context: ./modbus
-  #       dockerfile: Dockerfile
-  #     ports:
-  #     - "502:5002"
-  # service4:
-  #     build:
-  #       context: ./telnet
-  #       dockerfile: Dockerfile
-  #     ports:
-  #     - "23:2323"
-
+  ssh_service:
+      build:
+        context: ./ssh
+        dockerfile: Dockerfile
+      environment:
+        - SSH_REAL_PORT=${SSH_REAL_PORT}
+        - SSH_REMOTE_PORT=${SSH_REMOTE_PORT}
+        - IP_ELASTIC=${IP_ELASTIC}
+      ports:
+        - "${SSH_REMOTE_PORT}:${SSH_REAL_PORT}"
