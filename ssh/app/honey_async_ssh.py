@@ -8,9 +8,9 @@ from log_requests import Request
 from elastic.elasticserver import ElasticServer
 
 
-import os
-valore1 = os.getenv("VALORE1",2222)
-PORT = valore1
+# import os
+# valore1 = os.getenv("VALORE1",2222)
+PORT = 2222
 
 
 BANNER = "SSH-2.0-OpenSSH_5.3"
@@ -103,7 +103,7 @@ class SSHSession(asyncssh.SSHServerSession):
             print(str(e))
 
     def connection_lost(self, exc: Optional[Exception]) -> None:
-        self.server.insert_ip_data(self.request.get_ip_info())  
+        # self.server.insert_ip_data(self.request.get_ip_info())  
         return super().connection_lost(exc)
 
 

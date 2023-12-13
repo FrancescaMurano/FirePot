@@ -15,9 +15,9 @@ class Path:
         if not hasattr(self,'initialized'):
             # self.__start_full_path = os.path.join(os.getcwd(),"home")
 
-            self.__start_full_path = os.path.join(os.getcwd(),"app","home")
+            # self.__start_full_path = os.path.join(os.getcwd(),"app","home")
             print(self.__start_full_path)
-            # start_full_path = os.path.join(os.getcwd(),"ssh","app","home")
+            self.start_full_path = os.path.join(os.getcwd(),"ssh","app","home")
 
             self.__current_path = self.__start_full_path
             self.initialized = True

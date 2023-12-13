@@ -25,3 +25,99 @@ class UserInput:
 #   - Visualizza dashboard
 #   - exit and down
 #   - exit 
+
+
+import subprocess
+import time
+import typer
+from requests import ConnectTimeout, HTTPError, ReadTimeout, Session, Timeout
+from rich.markup import escape
+from rich.console import Console
+from urllib3.exceptions import NewConnectionError
+import os
+
+app = typer.Typer()
+session = Session()
+console = Console(record=True)
+
+
+
+@app.callback()
+def main(
+        telnet: bool = typer.Option(
+            default = True,
+            prompt = True,
+            help = ""
+        ),
+        ssh: bool = typer.Option(
+            default = True,
+            prompt = True,
+            help = ""
+        ),
+        modbus: bool = typer.Option(
+            prompt = True,
+            default = True,
+            help = ""
+
+        ),
+        ftp: bool = typer.Option(
+            prompt = True,
+            default = True,
+            help = ""
+        ),
+        telnet_real_port: int = typer.Option(
+            prompt = True,
+            default = 2323,
+            help = ""
+        ),
+        telnet_remote_port: int = typer.Option(
+            prompt = True,
+            default = 23,
+            help = ""
+        ),
+        ssh_real_port: int = typer.Option(
+            prompt = True,
+            default = 2222,
+            help = ""
+        ),
+        ssh_remote_port: int = typer.Option(
+            prompt = True,
+            default = 22,
+            help = ""
+        ), 
+        ftp_real_port: int = typer.Option(
+            prompt = True,
+            default = 2121,
+            help = ""
+        ),
+        ftp_remote_port: int = typer.Option(
+            prompt = True,
+            default = 21,
+            help = ""
+        ),
+        modbus_real_port: int = typer.Option(
+            prompt = True,
+            default = 502,
+            help = ""
+        ),
+        modbus_remote_port   : int = typer.Option(
+            prompt = True,
+            default = 5002,
+            help = ""
+        ),    
+
+):
+    with console.status("Loading..."):
+        parameters = locals()
+        elastic_kibana_path =  os.path.join(os.getcwd(),"docker-compose_elastic_kibana.yml")
+        honey_path =  os.path.join(os.getcwd(),"docker-compose_ssh.yml")
+
+        # Imposta le variabili d'ambiente
+        variable = f"set VALORE1=${ssh_real_port}"
+        subprocess.run(variable, shell=True)
+        # Esegui Docker Compose
+        docker_compose_command = f"docker-compose -f {elastic_kibana_path} build && docker-compose -f {honey_path} up -d"
+        subprocess.run(docker_compose_command, shell=True)
+
+if __name__ == "__main__":
+    typer.run(main)

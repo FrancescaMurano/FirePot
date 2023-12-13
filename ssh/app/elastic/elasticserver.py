@@ -27,10 +27,12 @@ class ElasticServer:
         )
 
     def insert_ip_request(self,json_ip_requests):
+        try:
          self.es.index(
             index='commands_ssh',
-            document=json_ip_requests
-    )
+            document=json_ip_requests)
+        except Exception as e:
+            print(str(e))
     
 
 #     def erase(self):
@@ -43,5 +45,3 @@ class ElasticServer:
 #             #self.es.delete(index="commands_ssh",id=hit.meta.id)
 
 
-# e = ElasticServer()
-# e.erase()
