@@ -18,6 +18,14 @@ iptables -A INPUT -s 0.0.0.0/24 -p tcp -m tcp --dport 21 -j ACCEPT
 iptables -A INPUT -s 0.0.0.0/24 -p tcp -m tcp --dport 22 -j ACCEPT
 iptables -A INPUT -s 0.0.0.0/24 -p tcp -m tcp --dport 23 -j ACCEPT
 iptables -A INPUT -s 0.0.0.0/24 -p tcp -m tcp --dport 502 -j ACCEPT
+iptables -A INPUT -s 172.19.0.2/16 -p tcp -m tcp --dport 22 -j ACCEPT
+iptables -A INPUT -s 172.19.0.2/16 -p tcp -m tcp --dport 9200 -j ACCEPT
+iptables -A INPUT -s 127.0.0.1 -p tcp -m tcp --dport 9200 -j ACCEPT
+
+iptables -A INPUT -s 172.19.0.2/16 -p tcp -m tcp --dport 9200 -j ACCEPT
+
+
+
 
 
 # iptables -t nat -I PREROUTING -p tcp --dport 22 -j REDIRECT --to-ports 2222

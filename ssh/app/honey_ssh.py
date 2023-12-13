@@ -11,8 +11,9 @@ import asyncio
 
 
 paramiko.util.log_to_file("paramiko.log", level=paramiko.util.DEBUG)
-
-PORT = 2222
+import os
+valore1 = os.getenv("VALORE1",2222)
+PORT = valore1
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
 # commands

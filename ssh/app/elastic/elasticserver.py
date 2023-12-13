@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-IP = "34.17.54.125"
+IP = "localhost"
 class ElasticServer:
     _instance = None
 
@@ -14,7 +14,7 @@ class ElasticServer:
             self.initialized = True
 
             username = "elastic"
-            password = "+RIk0Zh-KI=oJL*bkopF"
+            password = "i3K3w1$dsO:Ge2,1Ec,r"
 
             self.es = Elasticsearch(f"http://{IP}:9200",
                     # ca_certs="config/certs/http_ca.crt",

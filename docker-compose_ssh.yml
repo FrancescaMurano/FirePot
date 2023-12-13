@@ -1,32 +1,30 @@
-version: '1'
+version: '3'
 services:
   service1:
     build:
       context: ./ssh
       dockerfile: Dockerfile
-      ports:
-      - "22:2222"
-    # Altri parametri del servizio
-  service2:
-    build:
-      context: ./ftp
-      dockerfile: Dockerfile
-      ports:
-      - "21:2121"
-      - "6000-6005:6000-6005"
-    # Altri parametri del servizio
-  service3:
-      build:
-        context: ./modbus
-        dockerfile: Dockerfile
-        ports:
-        - "502:5002"
-    # Altri parametri del servizio
-  service4:
-      build:
-        context: ./telnet
-        dockerfile: Dockerfile
-        ports:
-        - "23:2323"
-    # Altri parametri del servizio
+    environment:
+      - PARAMETRO1=${VALORE1}
+    ports:
+    - "22:2222"
+  # service2:
+  #   build:
+  #     context: ./ftp
+  #     dockerfile: Dockerfile
+  #   ports:
+  #   - "21:2121"
+  #   - "6000-6005:6000-6005"
+  # service3:
+  #     build:
+  #       context: ./modbus
+  #       dockerfile: Dockerfile
+  #     ports:
+  #     - "502:5002"
+  # service4:
+  #     build:
+  #       context: ./telnet
+  #       dockerfile: Dockerfile
+  #     ports:
+  #     - "23:2323"
 
