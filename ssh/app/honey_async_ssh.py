@@ -9,7 +9,6 @@ from elastic.elasticserver import ElasticServer
 import os
 
 PORT = os.getenv("SSH_REAL_PORT",2222)
-
 BANNER = "SSH-2.0-OpenSSH_5.3"
 
 UP_KEY = "\x1b[A".encode()
@@ -105,10 +104,14 @@ class SSHSession(asyncssh.SSHServerSession):
 
 
 async def start_server():
+    key = asyncssh.generate_private_key('ssh-rsa')
+
+    # Crea una lista contenente la chiave
+    server_host_keys = [key]
     await asyncssh.create_server(
         lambda *args, **kwargs: SSHServer(),
         '0.0.0.0', int(PORT),
-        server_host_keys=['static_host_key'])
+        server_host_keys=[key])
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

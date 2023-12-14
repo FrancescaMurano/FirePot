@@ -2,7 +2,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Q,Search
 import os 
 
-IP = os.getenv("IP_ELASTIC","localhost")
+IP = os.getenv("IP_ELASTIC_KIBANA","localhost")
 
 # IP = "34.17.54.125"
 

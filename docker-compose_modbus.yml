@@ -7,6 +7,6 @@ services:
       environment:
         - MODBUS_REAL_PORT=${MODBUS_REAL_PORT}
         - MODBUS_REMOTE_PORT=${MODBUS_REMOTE_PORT}
-        - IP_ELASTIC=${IP_ELASTIC}
+        - IP_ELASTIC_KIBANA=${IP_ELASTIC_KIBANA}
       ports:
         - "${MODBUS_REMOTE_PORT}:${MODBUS_REAL_PORT}"

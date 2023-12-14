@@ -9,7 +9,7 @@ services:
         - FTP_REMOTE_PORT=${FTP_REAL_PORT}
         - FTP_START_PORT=${FTP_START_PORT}
         - FTP_END_PORT=${FTP_END_PORT}
-        - IP_ELASTIC=${IP_ELASTIC}
+        - IP_ELASTIC_KIBANA=${IP_ELASTIC_KIBANA}
       ports:
         - "${FTP_REMOTE_PORT}:${FTP_REAL_PORT}"
         - "${FTP_START_PORT}-${FTP_END_PORT}:${FTP_START_PORT}-${FTP_END_PORT}"

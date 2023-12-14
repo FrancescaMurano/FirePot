@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch
 import os
 
-IP = os.getenv("IP_ELASTIC","localhost")
+IP = os.getenv("IP_ELASTIC_KIBANA","localhost")
 
 # IP = "34.17.54.125"
 class ElasticServer:

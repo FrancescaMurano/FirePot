@@ -27,9 +27,7 @@ class ConnectionLogHandler(logging.StreamHandler):
             super().emit(record)
 
 pymodbus_logger = logging.getLogger("pymodbus")
-
 pymodbus_logger.setLevel(logging.DEBUG)
-
 pymodbus_logger.addHandler(ConnectionLogHandler())
 
 class ServerSlave:
