@@ -97,14 +97,14 @@ def main(
             help = f"The remote port on which the {style('TELNET', fg='green')} service will be executed, the externally detected port."
         ),
         ssh_real_port: int = typer.Option(
-            prompt = f"Choice the real port of SSH service (Skip if you don't start the service).",
+            prompt = f"Choice the real port of {style('SSH', fg='yellow')} service (Skip if you don't start the service).",
             default = 2222,
-            help = f"The real port on which the SSH service will be executed."
+            help = f"The real port on which the {style('SSH', fg='yellow')} service will be executed."
         ),
         ssh_remote_port: int = typer.Option(
-            prompt = f"Choice the remote port of SSH service (Skip if you don't start the service).",
+            prompt = f"Choice the remote port of {style('SSH', fg='yellow')} service (Skip if you don't start the service).",
             default = 22,
-            help = f"The remote port on which the SSH service will be executed, the externally detected port."
+            help = f"The remote port on which the {style('SSH', fg='yellow')} service will be executed, the externally detected port."
         ), 
         ftp_real_port: int = typer.Option(
             prompt = f"Choice the real port of {style('FTP', fg='magenta')} service (Skip if you don't start the service)",
@@ -142,15 +142,15 @@ def main(
             help = f"The remote port on which the {style('MODBUS', fg='red')} service will be executed, the externally detected port."
         ),
         elastic_kibana: bool = typer.Option(
-            prompt = f"Do you want to start here an ElasticSearch service? Press Y or N.",
+            prompt = f"Do you want to start here an {style('ElasticSearch', fg='cyan')} service? Press Y or N.",
             default = True,
-            help = f"Press Y to init Elasticsearch and Kibana locally in your machine. Press N if you have already this instances in another machine. \
+            help = f"Press Y to init {style('ElasticSearch', fg='cyan')} and Kibana locally in your machine. Press N if you have already this instances in another machine. \
             Pay attention, elasticsearch/kibana is mandatory for the correct functioning of this tool."
         ),
         ip_elastic_kibana: str = typer.Option(
-            prompt = f"Insert the IP ADDRESS of the elastic instance.",
+            prompt = f"Insert the IP ADDRESS of the {style('ElasticSearch', fg='cyan')} instance.",
             default = "localhost",
-            help = f"Public IP address of ElasticSearch instance."
+            help = f"Public IP address of {style('ElasticSearch', fg='cyan')} instance."
         ),
 
 ):
@@ -200,10 +200,9 @@ def main(
             command = f"docker-compose -f {elastic_compose} up  -d"
             try:
                 process = subprocess.run(command, shell=True)
+                upload_dash(ip=os.environ["IP_ELASTIC_KIBANA"])
             except Exception as e:
                 print(str(e))
-            finally:
-                upload_dash(ip=os.environ["IP_ELASTIC_KIBANA"])
 
 if __name__ == "__main__":
     typer.run(main)
