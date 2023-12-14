@@ -1,6 +1,8 @@
 from elasticsearch import Elasticsearch
+import os
+IP = os.getenv("IP_ELASTIC","localhost")
 
-IP = "34.17.54.125"
+# IP = "34.17.54.125"
 class ElasticServer:
     _instance = None
 

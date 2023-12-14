@@ -1,6 +1,9 @@
 from elasticsearch import Elasticsearch
+import os
 
-IP = "34.17.54.125"
+IP = os.getenv("IP_ELASTIC","localhost")
+
+# IP = "34.17.54.125"
 class ElasticServer:
     _instance = None
 
@@ -15,7 +18,7 @@ class ElasticServer:
 
             self.es = Elasticsearch(f"http://{IP}:9200",
                     # ca_certs="config/certs/http_ca.crt"
-                    )
+            )
 
     def insert_ip_data(self,json_ip_data):
         try:

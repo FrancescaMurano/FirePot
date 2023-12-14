@@ -1,7 +1,11 @@
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Q,Search
+import os 
 
-IP = "34.17.54.125"
+IP = os.getenv("IP_ELASTIC","localhost")
+
+# IP = "34.17.54.125"
+
 class ElasticServer:
     _instance = None
 
