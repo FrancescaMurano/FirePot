@@ -96,12 +96,16 @@ def main(
             prompt = True,
             default = 502,
             help = ""
-        ),    
+        ),
+        elastic: bool = typer.Option(
+            confirmation_prompt= True,
+            default = True,
+            help = ""
+        ),
 
 ):
     
     with console.status("Loading..."):
-
 
         os.environ["SSH_REAL_PORT"] = str(ssh_real_port)
         os.environ["SSH_REMOTE_PORT"] = str(ssh_remote_port)
@@ -137,6 +141,11 @@ def main(
         if ftp:    
             ftp_compose = "docker-compose_ftp.yml"
             command = f"docker-compose -f {ftp_compose} up -d"
+            subprocess.run(command, shell=True)
+        
+        if elastic:
+            elastic_compose = "docker-compose_kibana_elastic.yml"
+            command = f"docker-compose -f {elastic_compose} up -d"
             subprocess.run(command, shell=True)
 
 if __name__ == "__main__":
