@@ -87,7 +87,6 @@ def main(
             default = True,
             prompt = f"Do you want to start a {style('MODBUS', fg='red')} honeypot? Press Y or N.",
             help = f"Start a {style('MODBUS', fg='red')} honeypot. Press Y = yes, N = no"
-
         ),
         ftp: bool = typer.Option(
             default = True,
@@ -161,8 +160,8 @@ def main(
             Pay attention, elasticsearch/kibana is mandatory for the correct functioning of this tool."
         ),
         ip_elastic_kibana: str = typer.Option(
-            prompt = f"Insert the IP ADDRESS of the {style('ElasticSearch', fg='cyan')} instance.",
-            default = "localhost",
+            prompt = f"If Elastic/Kibana isn't locally, Insert the public IP ADDRESS of the {style('ElasticSearch', fg='cyan')} instance. (else Skip)",
+            default = "elasticsearch",
             help = f"Public IP address of {style('ElasticSearch', fg='cyan')} instance."
         ),
 
@@ -184,9 +183,21 @@ def main(
         os.environ["FTP_START_PORT"] = str(ftp_start_port)
         os.environ["FTP_END_PORT"] = str(ftp_end_port)
         os.environ["FTP_MASQUERADE_ADDRESS"] = str(ftp_masquerade_address)
-        
-        os.environ["IP_ELASTIC_KIBANA"] = "elasticsearch"
+        os.environ["IP_ELASTIC_KIBANA"] = str(ip_elastic_kibana)
 
+        if elastic_kibana:
+            elastic_compose = "docker-compose_kibana_elastic.yml"
+            create_net1 = "docker network create import_log 2>/dev/null"
+            create_net2 = "docker network create elastic 2>/dev/null"
+            command = f"docker-compose -f {elastic_compose} up  -d"
+            
+            try:
+                subprocess.run(create_net1, shell=True)
+                subprocess.run(create_net2, shell=True)
+                subprocess.run(command, shell=True)
+                upload_dash(ip=os.environ["IP_ELASTIC_KIBANA"])
+            except Exception as e:
+                print(str(e))
 
         if modbus:
             disable_service("modbus")
@@ -212,14 +223,6 @@ def main(
             command = f"docker-compose -f {ftp_compose} up  -d --build"
             subprocess.run(command, shell=True)
         
-        if elastic_kibana:
-            elastic_compose = "docker-compose_kibana_elastic.yml"
-            command = f"docker-compose -f {elastic_compose} up  -d"
-            try:
-                process = subprocess.run(command, shell=True)
-                upload_dash(ip=os.environ["IP_ELASTIC_KIBANA"])
-            except Exception as e:
-                print(str(e))
 
 if __name__ == "__main__":
     typer.run(main)
