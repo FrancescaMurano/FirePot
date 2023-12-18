@@ -53,6 +53,14 @@ def upload_dash(ip: str):
     print("Telnet Dashboard Import Response:", telnet_response.text)
 
 
+def disable_service(service: str):
+    command = f"sudo systemctl disable {service}"
+    subprocess.run(command, shell=True)
+
+def change_ssh_port(port: int):
+    command=f"sudo sed -i 's/^Port .*/Port {port}/' /etc/ssh/sshd_config"
+    subprocess.run(command, shell=True)
+    subprocess.run("sudo systemctl restart ssh", shell=True)
 
 
 typer.echo("\
@@ -89,22 +97,27 @@ def main(
         telnet_real_port: int = typer.Option(
             prompt = f"Insert the real port of your {style('TELNET', fg='green')} honeypot (Skip if you don't start the service).",
             default = 2323,
-            help = f"The rel port on which the {style('TELNET', fg='green')} service will be executed"
+            help = f"The real port on which the {style('TELNET', fg='green')} honeypot service will be executed"
         ),
         telnet_remote_port: int = typer.Option(
-            prompt = f"Choice the remote port of {style('TELNET', fg='green')} service (Skip if you don't start the service).",
+            prompt = f"Choice the remote port of {style('TELNET', fg='green')} honeypot service (Skip if you don't start the service).",
             default = 23,
-            help = f"The remote port on which the {style('TELNET', fg='green')} service will be executed, the externally detected port."
+            help = f"The remote port on which the {style('TELNET', fg='green')} honeypot service will be executed, the externally detected port."
         ),
         ssh_real_port: int = typer.Option(
-            prompt = f"Choice the real port of {style('SSH', fg='yellow')} service (Skip if you don't start the service).",
+            prompt = f"Choice the real port of {style('SSH', fg='yellow')} honeypot service (Skip if you don't start the service).",
             default = 2222,
-            help = f"The real port on which the {style('SSH', fg='yellow')} service will be executed."
+            help = f"The real port on which the honeypot {style('SSH', fg='yellow')} service will be executed."
         ),
         ssh_remote_port: int = typer.Option(
-            prompt = f"Choice the remote port of {style('SSH', fg='yellow')} service (Skip if you don't start the service).",
+            prompt = f"Choice the remote port of {style('SSH', fg='yellow')} honeypot service (Skip if you don't start the service).",
             default = 22,
-            help = f"The remote port on which the {style('SSH', fg='yellow')} service will be executed, the externally detected port."
+            help = f"The remote port on which the {style('SSH', fg='yellow')} honeypot service will be executed, the externally detected port."
+        ), 
+        ssh_machine_port: int = typer.Option(
+            prompt = f"Choice the real port of {style('SSH', fg='red')} service in your machine (Skip if you don't start the honeypot service).",
+            default = 5000,
+            help = f"The real port on which the real {style('SSH', fg='yellow')} service will be executed. (The default port will be changed in config)"
         ), 
         ftp_real_port: int = typer.Option(
             prompt = f"Choice the real port of {style('FTP', fg='magenta')} service (Skip if you don't start the service)",
@@ -176,21 +189,25 @@ def main(
 
 
         if modbus:
+            disable_service("modbus")
             modbus_compose = "docker-compose_modbus.yml"
             command = f"docker-compose -f {modbus_compose} up  -d --build"
             subprocess.run(command, shell=True)
 
         if ssh:
+            change_ssh_port(ssh_machine_port)
             ssh_compose = "docker-compose_ssh.yml"
             command = f"docker-compose -f {ssh_compose} up  -d --build"
             subprocess.run(command, shell=True)
 
         if telnet:
+            disable_service("telnet")
             telnet_compose = "docker-compose_telnet.yml"
             command = f"docker-compose -f {telnet_compose} up  -d --build"
             subprocess.run(command, shell=True)
 
         if ftp:    
+            disable_service("ftp")
             ftp_compose = "docker-compose_ftp.yml"
             command = f"docker-compose -f {ftp_compose} up  -d --build"
             subprocess.run(command, shell=True)
