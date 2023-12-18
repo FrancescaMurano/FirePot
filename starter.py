@@ -185,7 +185,7 @@ def main(
         os.environ["FTP_END_PORT"] = str(ftp_end_port)
         os.environ["FTP_MASQUERADE_ADDRESS"] = str(ftp_masquerade_address)
         
-        os.environ["IP_ELASTIC_KIBANA"] = str(ip_elastic_kibana)
+        os.environ["IP_ELASTIC_KIBANA"] = "elasticsearch"
 
 
         if modbus:
