@@ -10,3 +10,12 @@ services:
         - IP_ELASTIC_KIBANA=${IP_ELASTIC_KIBANA}
       ports:
         - "${SSH_REMOTE_PORT}:${SSH_REAL_PORT}"
+  
+  networks:
+    - elastic
+    - import-log
+  
+networks:
+    elastic:
+    import_log:
+      external: true
