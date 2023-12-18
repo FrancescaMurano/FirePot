@@ -10,6 +10,8 @@ services:
       - 9200:9200
     networks:
       - elastic
+      - import_log
+
     ulimits:
       memlock:
         soft: -1
@@ -38,10 +40,6 @@ services:
             cpus: '2.0'
           reservations:
             cpus: '1.0'
-  
-  networks:
-    - elastic
-    - import-log
   
 networks:
     elastic:
