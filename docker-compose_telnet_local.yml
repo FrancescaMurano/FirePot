@@ -1,0 +1,13 @@
+version: '3'
+services:
+  telnet_service:
+      build:
+        context: ./telnet
+        dockerfile: Dockerfile
+      environment:
+        - TELNET_REAL_PORT=${TELNET_REAL_PORT}
+        - TELNET_REMOTE_PORT=${TELNET_REAL_PORT}
+        - IP_ELASTIC_KIBANA=${IP_ELASTIC_KIBANA}
+      ports:
+        - "${TELNET_REMOTE_PORT}:${TELNET_REAL_PORT}"
+

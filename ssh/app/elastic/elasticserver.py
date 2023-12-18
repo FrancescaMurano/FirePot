@@ -1,9 +1,8 @@
 from elasticsearch import Elasticsearch
 import os
 
-# IP = os.getenv("IP_ELASTIC_KIBANA","elasticsearch")
+IP = os.getenv("IP_ELASTIC_KIBANA","elasticsearch")
 
-IP = "elasticsearch"
 
 class ElasticServer:
     _instance = None

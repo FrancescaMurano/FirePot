@@ -1,0 +1,20 @@
+version: '3'
+services:
+  modbus_service:
+      build:
+        context: ./modbus
+        dockerfile: Dockerfile
+      environment:
+        - MODBUS_REAL_PORT=${MODBUS_REAL_PORT}
+        - MODBUS_REMOTE_PORT=${MODBUS_REMOTE_PORT}
+        - IP_ELASTIC_KIBANA=${IP_ELASTIC_KIBANA}
+      ports:
+        - "${MODBUS_REMOTE_PORT}:${MODBUS_REAL_PORT}"
+      networks:
+        - elastic
+        - import_log
+    
+networks:
+  elastic:
+  import_log:
+    external: true

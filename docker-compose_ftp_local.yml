@@ -13,3 +13,11 @@ services:
       ports:
         - "${FTP_REMOTE_PORT}:${FTP_REAL_PORT}"
         - "${FTP_START_PORT}-${FTP_END_PORT}:${FTP_START_PORT}-${FTP_END_PORT}"
+      networks:
+        - elastic
+        - import_log
+    
+networks:
+  elastic:
+  import_log:
+    external: true

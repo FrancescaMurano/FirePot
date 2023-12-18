@@ -2,9 +2,9 @@ from pymodbus.client.sync import ModbusTcpClient
 from pymodbus import *
 
 SERVER = '34.17.52.4'
-# PORT = 502
-SERVER = "localhost"
-PORT = 5002
+PORT = 502
+# SERVER = "localhost"
+# PORT = 5002
 
 client: ModbusTcpClient =  ModbusTcpClient(host=SERVER,port=PORT)
 print (client)
