@@ -39,9 +39,9 @@ class LogHandler(logging.StreamHandler):
 def restore_files():
 
     # Percorsi delle cartelle di origine e destinazione
-    origin_dir = os.path.join(os.getcwd(),"ftp","app","files","home")
-    remove_dir = os.path.join(os.getcwd(),"ftp","app","home")
-    new_dir = os.path.join(os.getcwd(),"ftp","app")
+    origin_dir = os.path.join(os.getcwd(),"app","files","home")
+    remove_dir = os.path.join(os.getcwd(),"app","home")
+    new_dir = os.path.join(os.getcwd(),"app")
 
     remove_p = ["rm","-r",remove_dir]
     cp_p = ["cp", "-r", origin_dir, new_dir]
