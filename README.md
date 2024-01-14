@@ -8,15 +8,15 @@ Honeypot 3.0 is a Python application that enables the creation of a customizable
 
 ## Telnet Service
 Simulates a Telnet service where the attacker attempts access (without a password), and the server responds positively. The attacker can use various commands typical of a Linux shell, such as ls, cd, whoami, echo, etc.
-<a href="#"><img src="Screen/telnet/Immagine 2023-12-18 184855.png" width="500" height="360" alt="TELNET"></a>
+<a href="#"><img src="Screen/telnet/Immagine 2023-12-18 184855.png" width="530" height="360" alt="TELNET"></a>
 
 
 ## SSH Service
 Simulates an SSH service where the attacker attempts access. Using the credentials "root" and "root," the attacker successfully logs into the server, which responds positively. The attacker can utilize various commands typical of a Linux shell, such as ls, cd, whoami, echo, etc.
 
-<a href="#"><img src="Screen/ssh_honeypot/Immagine 2023-12-18 183449.png" width="500" height="360" alt="SSH"></a>
-<a href="#"><img src="Screen/ssh_honeypot/Immagine 2023-12-18 183431.png" width="500" height="360" alt="SSH"></a>
-<a href="#"><img src="Screen/ssh_honeypot/Immagine 2023-12-18 183449.png" width="500" height="360" alt="SSH"></a>
+<a href="#"><img src="Screen/ssh_honeypot/Immagine 2023-12-18 183449.png" width="530" height="360" alt="SSH"></a>
+<a href="#"><img src="Screen/ssh_honeypot/Immagine 2023-12-18 183431.png" width="530" height="360" alt="SSH"></a>
+<a href="#"><img src="Screen/ssh_honeypot/Immagine 2023-12-18 183449.png" width="530" height="360" alt="SSH"></a>
 
 ## MODBUS Service
 Simulates a MODBUS service where the attacker must possess a MODBUS client to access a fictitious device. Subsequently, they believe they can perform read and write operations on various registers.
