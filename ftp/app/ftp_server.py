@@ -54,9 +54,6 @@ def restore_files():
     except Exception as e:
         print(str(e))
 
-    # remove_process.communicate()
-    # copy_process.communicate()
-
 
 def remove_files_by_names(directory, filenames):
 
