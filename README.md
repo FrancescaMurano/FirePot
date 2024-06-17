@@ -49,7 +49,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Copyright
 
-Copyright (c) 2024 [Francesca Murano]
+Copyright (c) 2024 - Francesca Murano
 
 All rights reserved. This project was developed as part of my thesis at the University of Calabria.
 
