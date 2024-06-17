@@ -38,7 +38,7 @@ It is possible to monitor server activities using the data collected on Elastics
 <a href="#"><img src="Screen/telnet_dash1.png"></a>
 
 ## Start Script
-<a href="#"><img src="Screen/logo1.png"></a>
+<a href="#"><img src="Screen/logo1.jpg"></a>
 
 <a href="#"><img src="Screen/helper.png"></a>
 
