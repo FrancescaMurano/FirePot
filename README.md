@@ -1,6 +1,6 @@
-# Honeypot 3.0
+# FirePot
 
-Honeypot 3.0 is a Python application with ElasticSearch/Kibana that enables the creation of a customizable honeypot for the following services: 
+FirePot is a Python application with ElasticSearch/Kibana that enables the creation of a customizable honeypot for the following services: 
 - Telnet 
 - SSH
 - Modbus
