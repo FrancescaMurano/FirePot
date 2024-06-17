@@ -43,7 +43,15 @@ It is possible to monitor server activities using the data collected on Elastics
 <a href="#"><img src="Screen/helper.png"></a>
 
 
+## License
 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Copyright
+
+Copyright (c) 2024 [Francesca Murano]
+
+All rights reserved. This project was developed as part of my thesis at the University of Calabria.
 
 
 

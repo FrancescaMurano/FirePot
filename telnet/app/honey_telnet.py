@@ -1,3 +1,9 @@
+# Copyright (c) 2024 Francesca Murano
+# 
+# This file is part of the thesis project at the University of Calabria.
+# 
+# This project is licensed under the MIT License - see the LICENSE file for details.
+
 import asyncio
 from subprocess import *
 from elastic.elasticserver import ElasticServer

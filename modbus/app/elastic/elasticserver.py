@@ -2,7 +2,6 @@ from elasticsearch import Elasticsearch
 import os
 IP = os.getenv("IP_ELASTIC_KIBANA","localhost")
 
-# IP = "34.17.54.125"
 class ElasticServer:
     _instance = None
 
@@ -19,7 +18,6 @@ class ElasticServer:
             password = "+RIk0Zh-KI=oJL*bkopF"
 
             self.es = Elasticsearch(f"http://{IP}:9200",
-                    # ca_certs="config/certs/http_ca.crt",
                     basic_auth=(username,password))
 
     def insert_modbus_log_request(self,json):
